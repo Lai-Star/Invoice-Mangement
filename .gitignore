@@ -1,2 +1,3 @@
-bin
-config.yaml
+node_modules
+.eslintcache
+package-lock.json
