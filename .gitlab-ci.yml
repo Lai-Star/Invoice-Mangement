@@ -1,35 +1,77 @@
 stages:
   - Dependencies
-  - Build Javascript
+  - Build Binary
+  - Test
   - Build Container
   - Publish Container
 
+variables:
+  GO111MODULE: 'on'
+  GOFLAGS: '-mod=vendor'
+
 Fetch Dependencies:
   stage: Dependencies
-  image: node:15.8.0-buster
+  image: golang:1.15.8
   tags:
     - k8s:shared
   script:
-    - yarn install
+    - go mod vendor
   cache:
     key: ${CI_COMMIT_SHA}
     paths:
-      - ./node_modules
+      - ./vendor
     policy: push
 
 Build:
-  stage: Build Javascript
-  image: node:15.8.0-buster
+  stage: Build Binary
+  image: golang:1.15.8
   tags:
     - k8s:shared
   script:
-    - yarn build
+    - go build -o ./bin/rest-api github.com/harderthanitneedstobe/rest-api/v0/cmd/api
   cache:
     key: ${CI_COMMIT_SHA}
     paths:
-      - ./build
-      - ./node_modules
+      - ./bin
+      - ./vendor
     policy: pull-push
+
+Schema Generation:
+  stage: Test
+  image: golang:1.15.8
+  tags:
+    - k8s:shared
+  script:
+    - make schema
+    - make special-tests
+  cache:
+    key: ${CI_COMMIT_SHA}
+    paths:
+      - ./vendor
+    policy: pull
+
+Tests:
+  services:
+    - postgres:13
+  variables:
+    POSTGRES_HOST: postgres
+    POSTGRES_PASSWORD: ""
+    POSTGRES_USER: api-testing
+    POSTGRES_DB: test-db
+    POSTGRES_HOST_AUTH_METHOD: trust
+  stage: Test
+  image: golang:1.15.8
+  tags:
+    - k8s:shared
+  before_script:
+    - make apply-schema-ci
+  script:
+    - go test -race -v ./...
+  cache:
+    key: ${CI_COMMIT_SHA}
+    paths:
+      - ./vendor
+    policy: pull
 
 Kaniko:
   stage: Build Container
@@ -43,7 +85,7 @@ Kaniko:
   cache:
     key: ${CI_COMMIT_SHA}
     paths:
-      - ./build
+      - ./bin
     policy: pull
 
 Publish GitLab:
@@ -64,8 +106,22 @@ Publish GitLab:
       /kaniko/executor --context $CI_PROJECT_DIR \
         --dockerfile $CI_PROJECT_DIR/Dockerfile \
         --destination $CI_REGISTRY_IMAGE:latest
-  cache:
-    key: ${CI_COMMIT_SHA}
-    paths:
-      - ./build
-    policy: pull
+
+Publish GitHub:
+  stage: Publish Container
+  only:
+    refs:
+      - main
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [ "" ]
+  tags:
+    - k8s:shared
+  before_script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"ghcr.io\":{\"username\":\"elliotcourant\",\"password\":\"$K8S_SECRET_GITHUB_ACCESS_TOKEN\"}}}" > /kaniko/.docker/config.json
+  script:
+    - |
+      /kaniko/executor --context $CI_PROJECT_DIR \
+        --dockerfile $CI_PROJECT_DIR/Dockerfile \
+        --destination ghcr.io/harderthanitneedstobe/rest-api:latest
