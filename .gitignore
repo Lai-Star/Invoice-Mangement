@@ -1,4 +1,4 @@
-bin
-config.yaml
-telepresence.log
-telepresence
+build
+node_modules
+.eslintcache
+package-lock.json
