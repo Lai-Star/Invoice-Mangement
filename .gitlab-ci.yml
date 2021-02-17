@@ -1,77 +1,35 @@
 stages:
   - Dependencies
-  - Build Binary
-  - Test
+  - Build Javascript
   - Build Container
   - Publish Container
 
-variables:
-  GO111MODULE: 'on'
-  GOFLAGS: '-mod=vendor'
-
 Fetch Dependencies:
   stage: Dependencies
-  image: golang:1.16.0
+  image: node:15.8.0-buster
   tags:
     - k8s:shared
   script:
-    - go mod vendor
+    - yarn install
   cache:
     key: ${CI_COMMIT_SHA}
     paths:
-      - ./vendor
+      - ./node_modules
     policy: push
 
 Build:
-  stage: Build Binary
-  image: golang:1.16.0
+  stage: Build Javascript
+  image: node:15.8.0-buster
   tags:
     - k8s:shared
   script:
-    - go build -o ./bin/rest-api github.com/harderthanitneedstobe/rest-api/v0/cmd/api
+    - yarn build
   cache:
     key: ${CI_COMMIT_SHA}
     paths:
-      - ./bin
-      - ./vendor
+      - ./build
+      - ./node_modules
     policy: pull-push
-
-Schema Generation:
-  stage: Test
-  image: golang:1.16.0
-  tags:
-    - k8s:shared
-  script:
-    - make schema
-    - make special-tests
-  cache:
-    key: ${CI_COMMIT_SHA}
-    paths:
-      - ./vendor
-    policy: pull
-
-Tests:
-  services:
-    - postgres:13
-  variables:
-    POSTGRES_HOST: postgres
-    POSTGRES_PASSWORD: ""
-    POSTGRES_USER: api-testing
-    POSTGRES_DB: test-db
-    POSTGRES_HOST_AUTH_METHOD: trust
-  stage: Test
-  image: golang:1.16.0
-  tags:
-    - k8s:shared
-  before_script:
-    - make apply-schema-ci
-  script:
-    - go test -race -v ./...
-  cache:
-    key: ${CI_COMMIT_SHA}
-    paths:
-      - ./vendor
-    policy: pull
 
 Kaniko:
   stage: Build Container
@@ -85,7 +43,7 @@ Kaniko:
   cache:
     key: ${CI_COMMIT_SHA}
     paths:
-      - ./bin
+      - ./build
     policy: pull
 
 Publish GitLab:
@@ -106,6 +64,11 @@ Publish GitLab:
       /kaniko/executor --context $CI_PROJECT_DIR \
         --dockerfile $CI_PROJECT_DIR/Dockerfile \
         --destination $CI_REGISTRY_IMAGE:latest
+  cache:
+    key: ${CI_COMMIT_SHA}
+    paths:
+      - ./build
+    policy: pull
 
 Publish GitHub:
   stage: Publish Container
@@ -124,4 +87,9 @@ Publish GitHub:
     - |
       /kaniko/executor --context $CI_PROJECT_DIR \
         --dockerfile $CI_PROJECT_DIR/Dockerfile \
-        --destination ghcr.io/harderthanitneedstobe/rest-api:latest
+        --destination ghcr.io/harderthanitneedstobe/web-ui:latest
+  cache:
+    key: ${CI_COMMIT_SHA}
+    paths:
+      - ./build
+    policy: pull
