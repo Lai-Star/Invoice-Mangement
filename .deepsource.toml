@@ -1,8 +1,13 @@
 version = 1
 
-test_patterns = ["**/*.spec.js"]
+test_patterns = ["**/*_test.go"]
 
-exclude_patterns = ["**/*.min.js"]
+[[analyzers]]
+name = "go"
+enabled = true
+
+  [analyzers.meta]
+  import_paths = ["github.com/HarderThanItNeedsToBe/rest-api/v0"]
 
 [[analyzers]]
 name = "test-coverage"
@@ -16,18 +21,8 @@ enabled = true
   dockerfile_paths = ["Dockerfile"]
 
 [[analyzers]]
-name = "javascript"
+name = "sql"
 enabled = true
-
-  [analyzers.meta]
-  environment = [
-    "nodejs",
-    "browser",
-    "jest"
-  ]
-  plugins = ["react"]
-  style_guide = "airbnb"
-  dialect = "flow"
 
 [[analyzers]]
 name = "secrets"
