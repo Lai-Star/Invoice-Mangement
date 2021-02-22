@@ -24,7 +24,7 @@
     "bfj": "7.0.2",
     "camelcase": "6.2.0",
     "case-sensitive-paths-webpack-plugin": "2.3.0",
-    "css-loader": "4.3.0",
+    "css-loader": "5.0.2",
     "dotenv": "8.2.0",
     "dotenv-expand": "5.1.0",
     "eslint": "7.20.0",
@@ -85,7 +85,7 @@
     "url-loader": "4.1.1",
     "web-vitals": "1.1.0",
     "webpack": "4.46.0",
-    "webpack-dev-server": "3.11.2",
+    "webpack-dev-server": "3.11.0",
     "webpack-manifest-plugin": "2.2.0",
     "workbox-webpack-plugin": "5.1.4"
   },
