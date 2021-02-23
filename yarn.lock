@@ -60,10 +60,10 @@
     semver "^5.4.1"
     source-map "^0.5.0"
 
-"@babel/core@7.13.0":
-  version "7.13.0"
-  resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.13.0.tgz#5d61713de310dcfb09258b9fbd081c90623a9548"
-  integrity sha512-aiv4TeB1i0y3E/+be4U4xtb21CvidNbBegcxvVOrM2B5HfKwwCbYdhGbZUtzeV4HkNevRMLx7oSgQ9bjl4WhXw==
+"@babel/core@7.13.1":
+  version "7.13.1"
+  resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.13.1.tgz#7ddd027176debe40f13bb88bac0c21218c5b1ecf"
+  integrity sha512-FzeKfFBG2rmFtGiiMdXZPFt/5R5DXubVi82uYhjGX4Msf+pgYQMCFIqFXZWs5vbIYbf14VeBIgdGI03CDOOM1w==
   dependencies:
     "@babel/code-frame" "^7.12.13"
     "@babel/generator" "^7.13.0"
@@ -2676,10 +2676,10 @@
     "@babel/runtime" "^7.12.5"
     "@testing-library/dom" "^7.28.1"
 
-"@testing-library/user-event@12.7.2":
-  version "12.7.2"
-  resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-12.7.2.tgz#78749eadc8324009b428bdb8d7edc64b63c3e86c"
-  integrity sha512-6uUYor7b0+JAcanK0rmCEZGo6t0n2F4WUKXL9toQg495a9YE2MHlJ8GWzfCgsUPyVHw8SNaMN8UrZoHABf+oOg==
+"@testing-library/user-event@12.7.3":
+  version "12.7.3"
+  resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-12.7.3.tgz#ef674ccb91794e52123b3532c336485d16f453b3"
+  integrity sha512-IdSHkWfbeSSJRFlldvHDWfVX0U18TbXIvLSGII+JbqkJrsflFr4OWlQIua0TvcVVJNna3BNrNvRSvpQ0yvSXlA==
   dependencies:
     "@babel/runtime" "^7.12.5"
 
