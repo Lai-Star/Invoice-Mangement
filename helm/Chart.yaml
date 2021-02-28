@@ -1,6 +1,6 @@
 apiVersion: v2
-name: web-ui
-description: Harder Than It Needs To Be's Web UI.
+name: rest-api
+description: Harder Than It Needs To Be's REST API
 
 # A chart can be either an 'application' or a 'library' chart.
 #
