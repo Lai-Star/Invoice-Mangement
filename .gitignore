@@ -1,4 +1,5 @@
-build
-node_modules
-.eslintcache
-package-lock.json
+bin
+config.yaml
+telepresence.log
+telepresence
+coverage.txt
