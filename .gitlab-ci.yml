@@ -1,63 +1,97 @@
 stages:
   - Dependencies
-  - Build Javascript
-  - Test Javascript
+  - Build Binary
+  - Test
+  - Documentation
   - Coverage
   - Build Container
   - Publish Container
 
-JS Dependencies:
+variables:
+  GO111MODULE: 'on'
+  GOFLAGS: '-mod=vendor'
+
+Go Dependencies:
   needs: []
   stage: Dependencies
-  image: node:15.11.0-buster
+  image: golang:1.16.2
   tags:
     - k8s:shared
+    - arch:amd64
   script:
-    - yarn install --no-lockfile # Will use my npm proxy/registry allowing for faster pulling of dependencies.
+    - go mod vendor
   cache:
     key: ${CI_COMMIT_SHA}
     paths:
-      - ./node_modules
+      - ./vendor
     policy: push
 
 Build:
   needs:
-    - "JS Dependencies"
-  stage: Build Javascript
-  image: node:15.11.0-buster
+    - "Go Dependencies"
+  stage: Build Binary
+  image: golang:1.16.2
   tags:
     - k8s:shared
+    - arch:amd64
   script:
-    - yarn build
+    - go build -o ./bin/rest-api-${GOARCH} github.com/harderthanitneedstobe/rest-api/v0/cmd/api
   cache:
     key: ${CI_COMMIT_SHA}
     paths:
-      - ./build
-      - ./node_modules
+      - ./bin
+      - ./vendor
     policy: pull-push
 
-Test:
+Schema Generation:
   needs:
-    - "JS Dependencies"
-  stage: Test Javascript
-  image: node:15.11.0-buster
+    - "Go Dependencies"
+  stage: Test
+  image: golang:1.16.2
   tags:
     - k8s:shared
   script:
-    - yarn test
+    - make schema
+    - make special-tests
   cache:
     key: ${CI_COMMIT_SHA}
     paths:
-      - ./node_modules
+      - ./vendor
     policy: pull
+
+Tests:
+  needs:
+    - "Go Dependencies"
+  services:
+    - postgres:13
+  variables:
+    POSTGRES_HOST: postgres
+    POSTGRES_PASSWORD: ""
+    POSTGRES_USER: api-testing
+    POSTGRES_DB: test-db
+    POSTGRES_HOST_AUTH_METHOD: trust
+  stage: Test
+  image: golang:1.16.2
+  tags:
+    - k8s:shared
+    - arch:amd64
+  before_script:
+    - make apply-schema-ci
+  script:
+    - make test
+  cache:
+    key: ${CI_COMMIT_SHA}
+    paths:
+      - ./vendor
+      - ./coverage.txt
+    policy: pull-push
 
 Yeet Coverage:
   needs:
-    - "Test"
+    - "Tests"
   environment:
     name: DeepSource
   stage: Coverage
-  when: manual
   image: ubuntu:20.04
   tags:
     - k8s:shared
@@ -75,29 +109,56 @@ Yeet Coverage:
       - ./coverage.txt
     policy: pull
 
-Kaniko:
+Documentation:
+  allow_failure: true
   needs:
-    - "Build"
+    - "Go Dependencies"
+  stage: Documentation
+  image: golang:1.16.2
+  tags:
+    - k8s:shared
+    - arch:amd64
+  script:
+    - make docs
+  cache:
+    key: ${CI_COMMIT_SHA}
+    paths:
+      - ./docs
+      - ./vendor
+    policy: pull-push
+
+Kaniko - REST API:
+  needs:
+    - "Go Dependencies"
   stage: Build Container
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [ "" ]
   tags:
     - k8s:shared
+    - arch:amd64
   script:
     - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --no-push
-  cache:
-    key: ${CI_COMMIT_SHA}
-    paths:
-      - ./build
-    policy: pull
 
-Publish GitHub:
+Kaniko - Work UI:
+  allow_failure: true
   needs:
-    - "Test"
-    - "Kaniko"
-  environment:
-    name: GitHub
+    - "Go Dependencies"
+  stage: Build Container
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [ "" ]
+  tags:
+    - k8s:shared
+    - arch:amd64
+  script:
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile.work --no-push
+
+Publish GitHub - REST API:
+  needs:
+    - "Kaniko - REST API"
+    - "Tests"
+  environment: GitHub
   stage: Publish Container
   only:
     refs:
@@ -107,16 +168,36 @@ Publish GitHub:
     entrypoint: [ "" ]
   tags:
     - k8s:shared
+    - arch:amd64
   before_script:
     - mkdir -p /kaniko/.docker
     - echo "{\"auths\":{\"ghcr.io\":{\"username\":\"elliotcourant\",\"password\":\"$K8S_SECRET_GITHUB_ACCESS_TOKEN\"}}}" > /kaniko/.docker/config.json
   script:
     - |
       /kaniko/executor --context $CI_PROJECT_DIR \
+        --build-arg $CI_COMMIT_SHA \
         --dockerfile $CI_PROJECT_DIR/Dockerfile \
-        --destination ghcr.io/harderthanitneedstobe/web-ui:latest
-  cache:
-    key: ${CI_COMMIT_SHA}
-    paths:
-      - ./build
-    policy: pull
+        --destination ghcr.io/harderthanitneedstobe/rest-api:latest
+
+Publish GitHub - Work UI:
+  needs:
+    - "Kaniko - Work UI"
+  environment: GitHub
+  stage: Publish Container
+  only:
+    refs:
+      - main
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [ "" ]
+  tags:
+    - k8s:shared
+    - arch:amd64
+  before_script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"ghcr.io\":{\"username\":\"elliotcourant\",\"password\":\"$K8S_SECRET_GITHUB_ACCESS_TOKEN\"}}}" > /kaniko/.docker/config.json
+  script:
+    - |
+      /kaniko/executor --context $CI_PROJECT_DIR \
+        --dockerfile $CI_PROJECT_DIR/Dockerfile.work \
+        --destination ghcr.io/harderthanitneedstobe/work-ui:latest
