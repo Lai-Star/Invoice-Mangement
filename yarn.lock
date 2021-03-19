@@ -2689,10 +2689,10 @@
     "@babel/runtime" "^7.12.5"
     "@testing-library/dom" "^7.28.1"
 
-"@testing-library/user-event@13.0.4":
-  version "13.0.4"
-  resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-13.0.4.tgz#43f48f314cd9861f8ae47c1b812ef7595e564032"
-  integrity sha512-ssnzbOq4dYSgeo9OusGqCqlilWCrADAUQQFsuzYE3tpdyuKUpHHN6QTNFrsWo/NEG7x7GMl3mJ8UqcJWDAMknQ==
+"@testing-library/user-event@13.0.3":
+  version "13.0.3"
+  resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-13.0.3.tgz#14f1d2a117f13529ea31ce6f7414b003c76f17e1"
+  integrity sha512-q9CAkTO+fV6dskQRttxsFVAzqMIhOVN0H0dSEssL5oz1H7QY7cMfQ/KPOt57lgXXPVRJ1pzGlKQotZ27E+PgvA==
   dependencies:
     "@babel/runtime" "^7.12.5"
 
@@ -6912,10 +6912,10 @@ immer@8.0.1:
   resolved "https://registry.yarnpkg.com/immer/-/immer-8.0.1.tgz#9c73db683e2b3975c424fb0572af5889877ae656"
   integrity sha512-aqXhGP7//Gui2+UrEtvxZxSquQVXTpZ7KDxfCcKAF3Vysvw0CViVaW9RZ1j1xlIYqaaaipBoqdqeibkc18PNvA==
 
-immer@8.0.3:
-  version "8.0.3"
-  resolved "https://registry.yarnpkg.com/immer/-/immer-8.0.3.tgz#26b360596e091eb26370d15db86bad3d5eb73972"
-  integrity sha512-UqLcFkrCZPmb0Lgs+TcaSa/mCAWrL7EcGB+7dHq7RzLkVQCevaRPL9+DZZ/bInuRAkamBoNKkG/OMIW91QFxOQ==
+immer@8.0.4:
+  version "8.0.4"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-8.0.4.tgz#3a21605a4e2dded852fb2afd208ad50969737b7a"
+  integrity sha512-jMfL18P+/6P6epANRvRk6q8t+3gGhqsJ9EuJ25AXE+9bNTYtssvzeYbEd0mXRYWCmmXSIbnlpz6vd6iJlmGGGQ==
 
 immutable@4.0.0-rc.12:
   version "4.0.0-rc.12"
