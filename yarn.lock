@@ -2689,10 +2689,10 @@
     "@babel/runtime" "^7.12.5"
     "@testing-library/dom" "^7.28.1"
 
-"@testing-library/user-event@13.0.6":
-  version "13.0.6"
-  resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-13.0.6.tgz#06ace823532775251b864212b6b1405c9c46c06d"
-  integrity sha512-61Rv1/9pr7rCilwnQ+uLdiaCBFSQp2GRmF2PHrX6gIy0mWqnR43p5pMJAdMA7PZ3JUN+8YyN5S2d1fq9DyYnYw==
+"@testing-library/user-event@13.0.5":
+  version "13.0.5"
+  resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-13.0.5.tgz#1dcd69ebf52dd62f62e1caf07722f844e625b99c"
+  integrity sha512-S11tKcdiLkHPUgHT++6sx7pJnLGiiFyLaqZM6AfZxn8mEypYVgC8R6ZuJYUE79fYl5GxN7chpQi65smawl/IwA==
   dependencies:
     "@babel/runtime" "^7.12.5"
 
@@ -5610,10 +5610,10 @@ es6-symbol@^3.1.1, es6-symbol@~3.1.3:
     d "^1.0.1"
     ext "^1.1.2"
 
-esbuild@0.9.4:
-  version "0.9.4"
-  resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.9.4.tgz#4480ffc4c1e5d5bb25958f889b5de0279bfb2d6f"
-  integrity sha512-bF6laCiYE5+iAfZsX+v6Lwvi5QbvKN3tThxDIR2WLyLYzTzNn0ijdpqkvTVsafmRZjic2Nq1nkSf5RSWySDTjA==
+esbuild@0.9.5:
+  version "0.9.5"
+  resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.9.5.tgz#200e7836580c0a78849ee257656efd40dbf0b4df"
+  integrity sha512-ZBOtZX9HxgSdwkAroVifEUgylWqbOjqbu1i1ohRvhoaYt6aj81dxbizODx419gwDAupqut44ehFVwUq7WRN/OA==
 
 escalade@^3.0.2, escalade@^3.1.1:
   version "3.1.1"
@@ -6912,10 +6912,10 @@ immer@8.0.1:
   resolved "https://registry.yarnpkg.com/immer/-/immer-8.0.1.tgz#9c73db683e2b3975c424fb0572af5889877ae656"
   integrity sha512-aqXhGP7//Gui2+UrEtvxZxSquQVXTpZ7KDxfCcKAF3Vysvw0CViVaW9RZ1j1xlIYqaaaipBoqdqeibkc18PNvA==
 
-immer@8.0.4:
-  version "8.0.4"
-  resolved "https://registry.yarnpkg.com/immer/-/immer-8.0.4.tgz#3a21605a4e2dded852fb2afd208ad50969737b7a"
-  integrity sha512-jMfL18P+/6P6epANRvRk6q8t+3gGhqsJ9EuJ25AXE+9bNTYtssvzeYbEd0mXRYWCmmXSIbnlpz6vd6iJlmGGGQ==
+immer@9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-9.0.0.tgz#37d0e2beb928b495be48abf98d35cf76c64ee158"
+  integrity sha512-/L68D6hSjuQoeymW42UQLTMHvRZCapuSBBm0CfKbIyoqMDH+p8PHg9Cti3eBQA+tCRAOUOSBgn8Ji70YXWmBkw==
 
 immutable@4.0.0-rc.12:
   version "4.0.0-rc.12"
