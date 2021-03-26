@@ -1,30 +1,10 @@
 stages:
   - Dependencies
-  - Build Binary
-  - Test
-  - Documentation
+  - Build Javascript
+  - Test Javascript
   - Coverage
   - Build Container
   - Publish Container
-
-variables:
-  GO111MODULE: 'on'
-  GOFLAGS: '-mod=vendor'
-
-Go Dependencies:
-  needs: [ ]
-  stage: Dependencies
-  image: containers.harderthanitneedstobe.com/golang:1.16.2
-  tags:
-    - k8s:shared
-    - arch:amd64
-  script:
-    - go mod vendor
-  cache:
-    key: go-${CI_COMMIT_SHA}
-    paths:
-      - ./vendor
-    policy: push
 
 JS Dependencies:
   needs: [ ]
@@ -32,150 +12,105 @@ JS Dependencies:
   image: containers.harderthanitneedstobe.com/node:15.12.0-buster
   tags:
     - k8s:shared
-    - arch:amd64
   script:
     - yarn install --no-lockfile # Will use my npm proxy/registry allowing for faster pulling of dependencies.
   cache:
-    key: js-${CI_COMMIT_SHA}
+    key: ${CI_COMMIT_SHA}
     paths:
       - ./node_modules
     policy: push
 
-Build:
+Build Development:
   needs:
-    - "Go Dependencies"
-  stage: Build Binary
-  image: containers.harderthanitneedstobe.com/golang:1.16.2
+    - "JS Dependencies"
+  stage: Build Javascript
+  image: containers.harderthanitneedstobe.com/node:15.12.0-buster
   tags:
     - k8s:shared
-    - arch:amd64
   script:
-    - go build -o ./bin/rest-api-${GOARCH} github.com/harderthanitneedstobe/rest-api/v0/cmd/api
+    - yarn build-dev
   cache:
-    key: go-${CI_COMMIT_SHA}
+    key: ${CI_COMMIT_SHA}
     paths:
-      - ./bin
-      - ./vendor
+      - ./node_modules
+    policy: pull
+
+Build Production:
+  needs:
+    - "JS Dependencies"
+  stage: Build Javascript
+  image: containers.harderthanitneedstobe.com/node:15.12.0-buster
+  tags:
+    - k8s:shared
+  script:
+    - yarn build-prod
+  cache:
+    key: ${CI_COMMIT_SHA}
+    paths:
+      - ./build
+      - ./node_modules
     policy: pull-push
 
-Schema Generation:
+Test:
   needs:
-    - "Go Dependencies"
-  stage: Test
-  image: containers.harderthanitneedstobe.com/golang:1.16.2
+    - "JS Dependencies"
+  stage: Test Javascript
+  image: containers.harderthanitneedstobe.com/node:15.12.0-buster
   tags:
     - k8s:shared
   script:
-    - make schema
-    - make special-tests
+    - yarn test
   cache:
-    key: go-${CI_COMMIT_SHA}
+    key: ${CI_COMMIT_SHA}
     paths:
-      - ./vendor
+      - ./node_modules
     policy: pull
-
-Tests:
-  needs:
-    - "Go Dependencies"
-  services:
-    - name: containers.harderthanitneedstobe.com/postgres:13
-      alias: postgres
-  variables:
-    POSTGRES_HOST: postgres
-    POSTGRES_PASSWORD: ""
-    POSTGRES_USER: api-testing
-    POSTGRES_DB: test-db
-    POSTGRES_HOST_AUTH_METHOD: trust
-  stage: Test
-  image: containers.harderthanitneedstobe.com/golang:1.16.2
-  tags:
-    - k8s:shared
-    - arch:amd64
-  before_script:
-    - make apply-schema-ci
-  script:
-    - make test
-  cache:
-    key: go-${CI_COMMIT_SHA}
-    paths:
-      - ./vendor
-    policy: pull
-  artifacts:
-    name: "$CI_COMMIT_SHA-test-coverage"
-    paths:
-      - ./coverage.txt
-    expire_in: 7 days
 
 Yeet Coverage:
   needs:
-    - "Tests"
+    - "Test"
   environment:
     name: DeepSource
   stage: Coverage
-  image: ghcr.io/harderthanitneedstobe/deepsource:v0.1.7-9-gff81369
+  when: manual
+  image: ubuntu:20.04
   tags:
     - k8s:shared
-    - arch:amd64
+  variables:
+    DEBIAN_FRONTEND: noninteractive
+  before_script:
+    - apt-get update
+    - apt-get install curl git-all -y
+    - curl https://deepsource.io/cli | sh
   script:
-    - export DEEPSOURCE_DSN=$K8S_SECRET_DEEPSOURCE_DSN
-    - deepsource report --analyzer test-coverage --key go --value-file ./coverage.txt
-  dependencies:
-    - "Tests"
-
-Documentation:
-  allow_failure: true
-  needs:
-    - "Go Dependencies"
-  stage: Documentation
-  image: containers.harderthanitneedstobe.com/golang:1.16.2
-  tags:
-    - k8s:shared
-    - arch:amd64
-  script:
-    - go get github.com/swaggo/swag/cmd/swag
-    - go build -o /bin/swag github.com/swaggo/swag/cmd/swag
-    - /bin/swag init -d pkg/controller -g controller.go --parseDependency --parseDepth 5 --parseInternal
+    - DEEPSOURCE_DSN=$K8S_SECRET_DEEPSOURCE_DSN ./bin/deepsource report --analyzer test-coverage --key go --value-file ./coverage.txt
   cache:
-    key: go-${CI_COMMIT_SHA}
+    key: ${CI_COMMIT_SHA}
     paths:
-      - ./vendor
+      - ./coverage.txt
     policy: pull
-  artifacts:
-    name: "$CI_COMMIT_SHA-documentation"
-    paths:
-      - ./docs
-    expire_in: 7 days
 
-Kaniko - REST API:
+Kaniko:
   needs:
-    - "Go Dependencies"
+    - "Build Production"
   stage: Build Container
   image: containers.harderthanitneedstobe.com/kaniko-ci:latest
   tags:
     - k8s:shared
-    - arch:amd64
   script:
     - kaniko --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --no-push
+  cache:
+    key: ${CI_COMMIT_SHA}
+    paths:
+      - ./build
+    policy: pull
 
-Kaniko - Work UI:
-  allow_failure: true
+Publish GitHub:
   needs:
-    - "Go Dependencies"
-  stage: Build Container
-  image: containers.harderthanitneedstobe.com/kaniko-ci:latest
-  tags:
-    - k8s:shared
-    - arch:amd64
-  script:
-    - kaniko --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile.work --no-push
-
-Publish - REST API:
-  needs:
-    - "Kaniko - REST API"
-    - "Tests"
-  secrets:
-    DOCKER_CONFIG_JSON:
-      vault: containers/push/docker-config.json@pipelines/harderthanitneedstobe.com
+    - "Test"
+    - "Kaniko"
+  environment:
+    name: GitHub
   stage: Publish Container
   only:
     refs:
@@ -183,38 +118,13 @@ Publish - REST API:
   image: containers.harderthanitneedstobe.com/kaniko-ci:latest
   tags:
     - k8s:shared
-    - arch:amd64
   before_script:
-    - ln -s $DOCKER_CONFIG_JSON /kaniko/.docker/config.json
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"ghcr.io\":{\"username\":\"elliotcourant\",\"password\":\"$K8S_SECRET_GITHUB_ACCESS_TOKEN\"}}}" > /kaniko/.docker/config.json
   script:
-    - |
-      kaniko --context $CI_PROJECT_DIR \
-        --build-arg $CI_COMMIT_SHA \
-        --dockerfile $CI_PROJECT_DIR/Dockerfile \
-        --destination ghcr.io/harderthanitneedstobe/rest-api:latest \
-        --destination ghcr.io/harderthanitneedstobe/rest-api:$(git rev-parse --short HEAD)  \
-        --destination containers.harderthanitneedstobe.com/rest-api:latest \
-        --destination containers.harderthanitneedstobe.com/rest-api:$(git rev-parse --short HEAD)
-
-Publish - Work UI:
-  needs:
-    - "Kaniko - Work UI"
-  secrets:
-    DOCKER_CONFIG_JSON:
-      vault: containers/push/docker-config.json@pipelines/harderthanitneedstobe.com
-  stage: Publish Container
-  only:
-    refs:
-      - main
-  image: containers.harderthanitneedstobe.com/kaniko-ci:latest
-  tags:
-    - k8s:shared
-    - arch:amd64
-  before_script:
-    - ln -s $DOCKER_CONFIG_JSON /kaniko/.docker/config.json
-  script:
-    - |
-      kaniko --context $CI_PROJECT_DIR \
-        --dockerfile $CI_PROJECT_DIR/Dockerfile.work \
-        --destination ghcr.io/harderthanitneedstobe/work-ui:latest \
-        --destination containers.harderthanitneedstobe.com/work-ui:latest
+    - kaniko --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination ghcr.io/harderthanitneedstobe/web-ui:latest
+  cache:
+    key: ${CI_COMMIT_SHA}
+    paths:
+      - ./build
+    policy: pull
