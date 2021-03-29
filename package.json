@@ -75,7 +75,7 @@
     "reselect": "4.0.0",
     "resolve": "1.20.0",
     "resolve-url-loader": "3.1.2",
-    "rrule": "2.6.8",
+    "rrule": "^2.6.8",
     "sass": "1.32.8",
     "selector-action": "1.2.0",
     "semver": "7.3.5",
@@ -112,7 +112,7 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "7.13.13",
+    "@babel/core": "7.13.14",
     "@babel/preset-env": "7.13.12",
     "@babel/preset-react": "7.13.13",
     "@hot-loader/react-dom": "17.0.1",
