@@ -1,5 +1,9 @@
-build
+bin
+config.yaml
+telepresence.log
+telepresence
+coverage.txt
+docs
 node_modules
-.eslintcache
-package-lock.json
-reports
+generated
+values.mayview.yaml
