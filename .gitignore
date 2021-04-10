@@ -1,10 +1,5 @@
-bin
-config.yaml
-telepresence.log
-telepresence
-coverage.txt
-docs
+build
 node_modules
-generated
-values.mayview.yaml
-redoc-static.html
+.eslintcache
+package-lock.json
+reports
