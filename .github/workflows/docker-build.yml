@@ -1,13 +1,13 @@
 name: Build
 
-#on:
-#  push:
-#    branches:
-#      - '!renovate/*'
-#      - main
-#  pull_request:
-#    branches:
-#      - main
+on:
+  push:
+    branches:
+      - '!renovate/*'
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   docker:
@@ -24,4 +24,4 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: false
-          tags: containers.monetr.dev/web-ui
+          tags: containers.monetr.dev/rest-api
