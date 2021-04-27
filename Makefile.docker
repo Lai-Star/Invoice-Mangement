@@ -1,5 +1,5 @@
 DOCKER_REPOSITORY = containers.monetr.dev
-DOCKER_IMAGE = rest-api
+DOCKER_IMAGE = web-ui
 
 default-docker:
 	$(error Please run a specific target)
