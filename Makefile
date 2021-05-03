@@ -1,80 +1,44 @@
-LOCAL_BIN_DIR = "$(PWD)/bin"
-NODE_MODULES_DIR = "$(PWD)/node_modules"
-VENDOR_DIR = "$(PWD)/vendor"
-BUILD_TIME=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+# Make it so we can run commands from our dependencies directly.
+PATH:=$(PATH):$(PWD)/node_modules/.bin
+BUILD_DIR = $(PWD)/build
+PUBLIC_DIR = $(PWD)/public
+
 RELEASE_REVISION=$(shell git rev-parse HEAD)
-MONETR_CLI_PACKAGE = "github.com/monetrapp/rest-api/pkg/cmd"
-COVERAGE_TXT = "$(PWD)/coverage.txt"
-
-PATH += "$(GOPATH):$(LOCAL_BIN_DIR)"
-
-default: dependencies build test
+ifndef ENVIRONMENT
+	ENVIRONMENT = Local
+endif
+ENV_LOWER = $(shell echo $(ENVIRONMENT) | tr A-Z a-z)
 
 dependencies:
-	go get ./...
-
-build:
-	go build -o $(LOCAL_BIN_DIR)/monetr $(MONETR_CLI_PACKAGE)
-
-test:
-	go test -race -v -coverprofile=$(COVERAGE_TXT) -covermode=atomic ./...
-	go tool cover -func=$(COVERAGE_TXT)
+	yarn install
 
 clean:
-	rm -rf $(LOCAL_BIN_DIR) || true
-	rm -rf $(COVERAGE_TXT) || true
-	rm -rf $(NODE_MODULES_DIR) || true
-	rm -rf $(VENDOR_DIR) || true
+	rm -rf $(BUILD_DIR)/* || true
 
-.PHONY: docs
-docs:
-	swag init -d pkg/controller -g controller.go --parseDependency --parseDepth 5 --parseInternal
+big-clean: clean
+	rm -rf $(PWD)/node_modules || true
 
-docker:
-	docker build \
-		--build-arg REVISION=$(RELEASE_REVISION) \
-		--build-arg BUILD_TIME=$(BUILD_TIME) \
-		-t harder-rest-api -f Dockerfile .
+start: dependencies
+	RELEASE_REVISION=$(RELEASE_REVISION) MONETR_ENV=local yarn start
 
-docker-work-web-ui:
-	docker build -t workwebui -f Dockerfile.work .
+build:
+	RELEASE_REVISION=$(RELEASE_REVISION) MONETR_ENV=$(ENV_LOWER) yarn build:production
+	cp $(PUBLIC_DIR)/favicon.ico $(BUILD_DIR)/
+	cp $(PUBLIC_DIR)/logo*.png $(BUILD_DIR)/
+	cp $(PUBLIC_DIR)/manifest.json $(BUILD_DIR)/
+	cp $(PUBLIC_DIR)/robots.txt $(BUILD_DIR)/
 
-clean-development:
-	docker-compose -f ./docker-compose.development.yaml rm --stop --force || true
-
-compose-development: docker docker-work-web-ui
-	docker-compose  -f ./docker-compose.development.yaml up
-
-compose-development-lite:
-	docker-compose  -f ./docker-compose.development.yaml up
-
-generate_schema:
-	$(eval TARGET_FILE := $(shell echo "$(TARGET_DIRECTORY)/0_initial.up.sql"))
-	$(info "Generating current schema into file $(TARGET_FILE)")
-	go run github.com/monetrapp/rest-api/tools/schemagen > $(TARGET_FILE)
-	yarn sql-formatter -l postgresql -u --lines-between-queries 2 $(TARGET_FILE) -o $(TARGET_FILE)
-
-migrations:
-	$(eval CURRENT_TMP := $(shell mktemp -d))
-	$(eval BASE_TMP := $(shell mktemp -d))
-	$(info "Generating schema migrations for the current schema in $(CURRENT_TMP)")
-	make generate_schema TARGET_DIRECTORY=$(CURRENT_TMP)
-	$(info "Cleaning up temp directories")
-	rm -rf $(CURRENT_TMP)
-
-ifdef GITLAB_CI
-include Makefile.gitlab-ci
-endif
-
-ifdef GITHUB_ACTION
-include Makefile.github-actions
-endif
-
-include Makefile.release
-include Makefile.tinker
 include Makefile.deploy
 include Makefile.docker
-
-ifndef CI
+include Makefile.release
 include Makefile.local
-endif
+
+# This is something to help debug CI issues locally. It will run a container and mount the current directory
+# locally. Its the same container used in the pipelines so it should be pretty close to the same for debugging.
+debug-ci:
+	docker run \
+		-w /build \
+		-v $(PWD):/build \
+		-it containers.monetr.dev/node:15.14.0-buster \
+		/bin/bash
