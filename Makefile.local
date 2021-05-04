@@ -1,42 +1,326 @@
-LOCAL_BIN = $(PWD)/bin
 LOCAL_TMP = $(PWD)/tmp
+LOCAL_BIN = $(PWD)/bin
+LOCAL_DIR=$(PWD)/local
+LOCAL_CERTS = $(LOCAL_DIR)/certs
 PATH:=$(LOCAL_BIN):$(PATH) # Use our local stuff first
 ARCH = amd64
 OS = $(shell uname -s | tr A-Z a-z)
 
+# Tools used to run the application locally
+HELM=helm
+HOSTESS=hostess
+JQ=jq
 KUBECTL=kubectl
-YQ=$(LOCAL_BIN)/yq
+SPLIT_YAML=kubernetes-split-yaml
+SSHFS=sshfs
+YQ=yq
+
+# This is the domain that is used for local development. You can change it to anything you want here and run init-mini
+# and everything will be provisioned and setup on your development machine for that domain.
+LOCAL_DOMAIN=monetr.mini
+SUBDOMAINS=work pghero vault ngrok registry app api
+
+VALUES=$(PWD)/values.local.yaml
+LOGIN_JWT_SECRET=$(LOCAL_DIR)/login_jwt_secret.txt
+REGISTER_JWT_SECRET=$(LOCAL_DIR)/register_jwt_secret.txt
+
+LOCAL_REST_API_DEPLOY=$(LOCAL_DIR)/rest-api-yaml
+
+REST_API_IMAGE_NAME=rest-api
 
 $(LOCAL_BIN):
 	mkdir -p $(LOCAL_BIN)
 
+$(LOCAL_DIR):
+	mkdir -p $(PWD)/local
+
+stop-mini:
+	minikube stop || true
+	for subdomain in $(SUBDOMAINS); do sudo $(HOSTESS) rm $$subdomain.$(LOCAL_DOMAIN) || true; done
+
+clean-mini: stop-mini clean-certificates
+	minikube delete || true
+	rm -rf $(VALUES) || true
+	rm -rf $(PWD)/local || true
+	rm -rf $(LOCAL_TMP) || true
+	rm -rf $(LOCAL_BIN) || true
+
+init-mini: local-dependencies-maybe
+	make setup-certificates
+	(minikube status | grep "minikube start") && make start-minikube
+	make setup-hosts
+	make setup-registry
+	make deploy-redis
+	make deploy-postgres
+	make deploy-web-ui
+	make deploy-mini-application
+
+MINIKUBE_NAMESPACE=default
+MINIKUBE_CPUS=4 # 4 CPU cores, could be reduced to 2.
+MINIKUBE_MEMORY=8192 # 8GB of memory. Reduce if this is too high for your computer. Could be reduced to 2GB
+MINIKUBE_DRIVER=hyperkit # I'm on macOS, so this will vary wildly.
+KUBERNETES_VERSION=v1.18.15
+start-minikube:
+	$(info Starting minikube)
+	minikube start \
+		--addons=ingress \
+		--cpus=$(MINIKUBE_CPUS) \
+		--memory=$(MINIKUBE_MEMORY) \
+		--delete-on-failure \
+		--driver=$(MINIKUBE_DRIVER) \
+		--kubernetes-version=$(KUBERNETES_VERSION) \
+		--embed-certs
+setup-etc-hosts:
+	$(eval MINIKUBE_IP = $(shell minikube ip))
+	for subdomain in $(SUBDOMAINS); do sudo $(HOSTESS) add $$subdomain.$(LOCAL_DOMAIN) $(MINIKUBE_IP); done
+
+setup-hosts:
+	make setup-etc-hosts
+	$(eval MINIKUBE_IP = $(shell minikube ip))
+	$(eval MINIKUBE_SSH_KEY = $(shell minikube ssh-key))
+	@sleep 5
+	ssh -o "IdentitiesOnly=yes" \
+ 		-o "StrictHostKeyChecking no" \
+ 		-i $(MINIKUBE_SSH_KEY) docker@$(MINIKUBE_IP) \
+ 		 'sudo chown docker /etc/hosts && echo "$(MINIKUBE_IP) registry.monetr.mini" >> /etc/hosts'
+	make deploy-certificate
+
+KEY_PATH=$(LOCAL_CERTS)/$(LOCAL_DOMAIN).key
+CERT_PATH=$(LOCAL_CERTS)/$(LOCAL_DOMAIN).crt
+clean-certificates:
+	(sudo security find-certificate -c $(LOCAL_DOMAIN) && make remove-certificate) || true
+	rm -rf $(LOCAL_CERTS) || true
+	rm -rf $(HOME)/.minikube/certs/$(LOCAL_DOMAIN).pem || true
+
+remove-certificate:
+	$(info Local development certificate is registered, it will be removed)
+	sudo security delete-certificate -c $(LOCAL_DOMAIN) || true
+
+NGINX_DEPLOYMENT=ingress-nginx-controller
+NGINX_NAMESPACE=$(shell $(KUBECTL) get deploy --all-namespaces --field-selector "metadata.name"=$(NGINX_DEPLOYMENT) -o yaml | $(YQ) e '.items[0].metadata.namespace' -)
+TLS_SECRET_NAME=monetr-tls
+setup-certificates: $(LOCAL_DIR)
+	mkdir -p $(LOCAL_CERTS)
+	openssl genrsa -out $(KEY_PATH) 2048
+	openssl req -new -x509 -addext "subjectAltName = DNS:*.$(LOCAL_DOMAIN)" -key $(KEY_PATH) -out $(CERT_PATH) -days 3650 \
+		-subj /CN=*.$(LOCAL_DOMAIN) || make help-certificates-openssl
+	sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain $(CERT_PATH)
+	(killall Docker && open /Applications/Docker.app) || true
+	mkdir -p $(HOME)/.minikube/certs
+	openssl x509 -in $(CERT_PATH) -out $(HOME)/.minikube/certs/$(LOCAL_DOMAIN).pem
+
+help-certificates-openssl:
+	@echo "============================================================="
+	@echo "It looks like there was a problem generating the certificate."
+	@echo "This can be due to using a version of openssl that is included with macOS."
+	@echo "You can check you version by running:"
+	@echo ""
+	@echo "$ openssl version"
+	@echo ""
+	@echo "If you see something like LibreSSL 2.8.3 then you'll need to install a different version of openssl"
+	@echo "If you have brew installed you can simply install the correct version using"
+	@echo ""
+	@echo "$ brew install openssl && brew link openssl"
+	@echo ""
+	@echo "You may also need to put the brew openssl first in your path"
+	@echo "More information on this can be found here: https://security.stackexchange.com/a/183973"
+	exit 100
+
+deploy-certificate:
+	rm -rf $(LOCAL_TMP)/nginx-*.json || true
+	$(KUBECTL) -n $(NGINX_NAMESPACE) create secret tls $(TLS_SECRET_NAME) --key $(KEY_PATH) --cert $(CERT_PATH) \
+		--dry-run=client \
+		-o yaml | $(KUBECTL) apply -f -
+	$(KUBECTL) get deploy/$(NGINX_DEPLOYMENT) \
+		--namespace=$(NGINX_NAMESPACE) -o json > $(LOCAL_TMP)/nginx-args.json
+	$(JQ) '.spec.template.spec.containers[0].args |= . + ["--default-ssl-certificate=$$(POD_NAMESPACE)/$(TLS_SECRET_NAME)"]' \
+		$(LOCAL_TMP)/nginx-args.json > $(LOCAL_TMP)/nginx-new.json
+	cat $(LOCAL_TMP)/nginx-new.json | $(KUBECTL) apply -f -
+	$(KUBECTL) rollout status deploy/$(NGINX_DEPLOYMENT) --namespace=$(NGINX_NAMESPACE) --timeout=90s
+	rm -rf $(LOCAL_TMP)/nginx-*.json || true
+
+setup-registry:
+	$(KUBECTL) apply -f $(PWD)/minikube/registry.yaml
+	$(KUBECTL) rollout status deploy/registry
+
+# We want to check and see if the values file exists or is up to date.
+$(VALUES):
+	if [ ! -f "$(VALUES)" ]; then $(HELM) show values $(PWD) > $(VALUES) && make init-mini-values; fi
+
+$(LOGIN_JWT_SECRET): $(LOCAL_DIR)
+	if [ ! -f "$(LOGIN_JWT_SECRET)" ]; then echo "Login JWT secret has not been generated, creating now" && sleep 1 && (date | md5 > $(LOGIN_JWT_SECRET)); fi
+
+$(REGISTER_JWT_SECRET): $(LOCAL_DIR)
+	if [ ! -f "$(REGISTER_JWT_SECRET)" ]; then echo "Register JWT secret has not been generated, creating now" && sleep 1 && (date | md5 > $(REGISTER_JWT_SECRET)); fi
+
+REST_API_IMAGE_REPO=registry.$(LOCAL_DOMAIN)/$(REST_API_IMAGE_NAME)
+init-mini-values: $(LOGIN_JWT_SECRET) $(REGISTER_JWT_SECRET)
+	yq e '.image.repository = "$(REST_API_IMAGE_REPO)"' -i $(VALUES)
+	yq e '.ingress.enabled = true' -i $(VALUES)
+	yq e '.ingress.annotations."kubernetes.io/ingress.class" = "nginx"' -i $(VALUES)
+	yq e '.ingress.hosts[0].host = "api.$(LOCAL_DOMAIN)"' -i $(VALUES)
+	yq e '.ingress.hosts[0].paths[0] = {"path": "/"}' -i $(VALUES)
+	yq e '.service.port = 4000' -i $(VALUES)
+	yq e '.api.includeSecrets = true' -i $(VALUES)
+	yq e '.api.uiDomainName = "app.$(LOCAL_DOMAIN)"' -i $(VALUES)
+	yq e '.api.apiDomainName = "api.$(LOCAL_DOMAIN)"' -i $(VALUES)
+	$(eval LOGIN_JWT_SECRET_VALUE = $(shell cat $(LOGIN_JWT_SECRET)))
+	export jwt_secret_value=$(LOGIN_JWT_SECRET_VALUE) && yq e '.api.jwt.loginJwtSecret = strenv(jwt_secret_value)' -i $(VALUES)
+	$(eval REGISTER_JWT_SECRET_VALUE = $(shell cat $(REGISTER_JWT_SECRET)))
+	export jwt_secret_value=$(REGISTER_JWT_SECRET_VALUE) && yq e '.api.jwt.registrationJwtSecret = strenv(jwt_secret_value)' -i $(VALUES)
+	yq e '.api.postgreSql.address = "postgres.$(MINIKUBE_NAMESPACE).svc.cluster.local"' -i $(VALUES)
+	yq e '.api.redis.address = "redis.$(MINIKUBE_NAMESPACE).svc.cluster.local"' -i $(VALUES)
+	yq e '.api.cors.allowedOrigins[0] = "https://app.$(LOCAL_DOMAIN)"' -i $(VALUES)
+	yq e '.api.cors.debug = false' -i $(VALUES)
+
+values-file: local-dependencies-maybe $(VALUES)
+
+$(LOCAL_REST_API_DEPLOY):
+	mkdir -p $(LOCAL_REST_API_DEPLOY)
+
+GO_HASH=$(shell find -s $(PWD)/pkg -type f -exec shasum {} \; | shasum | cut -d " " -f 1)
+BASE_IMAGE_NAME = registry.$(LOCAL_DOMAIN)/$(REST_API_IMAGE_NAME)
+IMAGE_NAME = $(BASE_IMAGE_NAME):$(GO_HASH)
+build-rest-api-mini: wait-for-docker
+	docker build \
+		--cache-from=$(BASE_IMAGE_NAME):latest \
+		--build-arg REVISION=$(RELEASE_REVISION) \
+		--build-arg BUILD_TIME=$(BUILD_TIME) \
+		-t $(IMAGE_NAME) \
+		-t $(BASE_IMAGE_NAME):latest \
+		-f Dockerfile .
+	docker push $(IMAGE_NAME)
+	docker push $(BASE_IMAGE_NAME):latest
+	yq e '.image.tag = "$(GO_HASH)"' -i $(VALUES)
+
+deploy-redis:
+	$(KUBECTL) apply -f $(PWD)/minikube/redis.yaml --namespace $(MINIKUBE_NAMESPACE)
+	$(KUBECTL) rollout status deploy/redis --namespace $(MINIKUBE_NAMESPACE) --timeout=30s
+
+deploy-postgres:
+	$(KUBECTL) apply -f $(PWD)/minikube/postgres.yaml --namespace $(MINIKUBE_NAMESPACE)
+	$(KUBECTL) rollout status deploy/postgres --namespace $(MINIKUBE_NAMESPACE) --timeout=30s
+
+
+deploy-mini-application: $(VALUES) $(LOCAL_REST_API_DEPLOY) build-rest-api-mini
+	$(eval CONFIG_HASH = $(shell md5 -q $(VALUES)))
+	CONFIG_HASH=$(CONFIG_HASH) $(YQ) e '.podAnnotations.configHash = strenv(CONFIG_HASH)' -i $(VALUES)
+	$(HELM) template $(REST_API_IMAGE_NAME) $(PWD) \
+ 		--dry-run \
+ 		--values=$(VALUES) | $(SPLIT_YAML) --outdir $(LOCAL_REST_API_DEPLOY) -
+	$(KUBECTL) delete svc/$(REST_API_IMAGE_NAME) --namespace $(MINIKUBE_NAMESPACE)
+	$(KUBECTL) apply -f $(LOCAL_REST_API_DEPLOY) --namespace $(MINIKUBE_NAMESPACE)
+	$(KUBECTL) rollout status deploy/rest-api --namespace $(MINIKUBE_NAMESPACE) --timeout=30s
+
+local-dependencies-maybe:
+	which minikube || make dependencies-minikube
+	which $(HOSTESS) || make dependencies-hostess
+	which $(JQ) || make dependencies-jq
+	which $(HELM) || make dependencies-helm
+	which $(SPLIT_YAML) || make dependencies-split-yaml
+	which $(YQ) || make dependencies-yq
+
+MINIKUBE_VERSION=latest
+dependencies-minikube:
+	curl -LO https://storage.googleapis.com/minikube/releases/$(MINIKUBE_VERSION)/minikube-$(OS)-amd64
+	sudo install minikube-$(OS)-amd64 $(LOCAL_BIN)/minikube
+
+HOSTESS_REPO=https://github.com/cbednarski/hostess
+HOSTESS_DIR=$(LOCAL_TMP)/$(HOSTESS)
+dependencies-hostess:
+	rm -rf $(HOSTESS_DIR) || true
+	git clone $(HOSTESS_REPO) $(HOSTESS_DIR)
+	cd $(HOSTESS_DIR) && go build -o $(LOCAL_BIN)/$(HOSTESS) .
+	rm -rf $(HOSTESS_DIR)
+
+JQ_URL=https://github.com/stedolan/jq/releases/download/jq-1.6/jq-osx-amd64
+JQ_DIR=$(LOCAL_TMP)/$(JQ)
+dependencies-jq:
+	rm -rf $(LOCAL_BIN)/$(JQ) || true
+	curl -L $(JQ_URL) -o $(LOCAL_BIN)/$(JQ)
+	sudo chmod +x $(LOCAL_BIN)/$(JQ)
+
 YQ_VERSION=v4.7.1
 YQ_BINARY=yq_$(OS)_$(ARCH)
 YQ_URL=https://github.com/mikefarah/yq/releases/download/$(YQ_VERSION)/$(YQ_BINARY).tar.gz
-YQ_DIR=$(LOCAL_TMP)/yq
-$(YQ): $(LOCAL_BIN)
+YQ_DIR=$(LOCAL_TMP)/$(YQ)
+dependencies-yq:
 	rm -rf $(YQ_DIR) || true
 	mkdir -p $(YQ_DIR)
 	curl -L $(YQ_URL) -o $(YQ_DIR).tar.gz
 	tar -xzf $(YQ_DIR).tar.gz -C $(YQ_DIR)
-	mv $(YQ_DIR)/yq_$(OS)_$(ARCH) $(YQ)
+	mv $(YQ_DIR)/$(YQ)_$(OS)_$(ARCH) $(LOCAL_BIN)/$(YQ)
 	rm -rf $(YQ_DIR) || true
 
-MINIKUBE_NAMESPACE=default
-
-WEB_UI_NAME=web-ui
-LOCAL_WEB_UI_DEPLOY=$(PWD)/minikube/$(WEB_UI_NAME).yaml
-
-deploy-web-ui:
-	$(KUBECTL) apply -f $(LOCAL_WEB_UI_DEPLOY) --namespace $(MINIKUBE_NAMESPACE)
-	$(KUBECTL) rollout status deploy/$(WEB_UI_NAME) --namespace $(MINIKUBE_NAMESPACE) --timeout=30s
-
-###################### DEBUGGING THE WEB UI ##################################
+###################### DEBUGGING THE REST API ##################################
 LOCAL_IP=$(shell ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v 127.0.0.1 | awk '{ print $$2 }' | cut -f2 -d: | head -n1)
-local-ui: $(YQ)
-	LOCAL_IP=$(LOCAL_IP) $(YQ) e '.subsets[0].addresses[0].ip = strenv(LOCAL_IP)' $(PWD)/minikube/ui-endpoint.yaml | $(KUBECTL) apply -f -
-	$(KUBECTL) get svc/$(WEB_UI_NAME) -n $(MINIKUBE_NAMESPACE) -o yaml | $(YQ) e 'del(.spec.selector)' - | $(KUBECTL) apply -f -
-	tmux new-session 'make start' || true
-	$(KUBECTL) delete svc/$(WEB_UI_NAME) --namespace $(MINIKUBE_NAMESPACE)
-	$(KUBECTL) apply -f $(LOCAL_WEB_UI_DEPLOY) --namespace $(MINIKUBE_NAMESPACE)
+local-api:
+	LOCAL_IP=$(LOCAL_IP) $(YQ) e '.subsets[0].addresses[0].ip = strenv(LOCAL_IP)' $(PWD)/minikube/api-endpoint.yaml | $(KUBECTL) apply -f -
+	$(KUBECTL) get svc/$(REST_API_IMAGE_NAME) -n $(MINIKUBE_NAMESPACE) -o yaml | $(YQ) e 'del(.spec.selector)' - | $(KUBECTL) apply -f -
+	$(KUBECTL) scale deploy/$(REST_API_IMAGE_NAME) --replicas=0 -n $(MINIKUBE_NAMESPACE)
+	tmux new-session 'minikube tunnel' || true
+	$(KUBECTL) delete svc/$(REST_API_IMAGE_NAME) --namespace $(MINIKUBE_NAMESPACE)
+	$(KUBECTL) apply -f $(LOCAL_REST_API_DEPLOY) --namespace $(MINIKUBE_NAMESPACE)
+	$(KUBECTL) scale deploy/$(REST_API_IMAGE_NAME) --replicas=1 -n $(MINIKUBE_NAMESPACE)
+	$(KUBECTL) rollout status deploy/ngrok --namespace $(MINIKUBE_NAMESPACE) --timeout=60s
 
+###################### WORKING ON WEBHOOKS LOCALLY ##################################
+webhooks-mini:
+ifndef NGROK_AUTH
+	$(error Must specify NGROK_AUTH to setup webhooks)
+	exit 100
+endif
+	$(KUBECTL) create secret generic ngrok-auth-secret \
+		--from-literal=NGROK_AUTH=$(NGROK_AUTH) \
+		--dry-run=client -o yaml | $(KUBECTL) apply -f - \
+		--namespace $(MINIKUBE_NAMESPACE)
+	$(KUBECTL) apply -f $(PWD)/minikube/ngrok.yaml \
+		--namespace $(MINIKUBE_NAMESPACE)
+	$(KUBECTL) rollout status deploy/ngrok \
+		--namespace $(MINIKUBE_NAMESPACE) --timeout=60s
+	@sleep 15 # Wait for ngrok to setup its public url.
+	make reconfigure-webhooks
+	@echo "#################################################################################"
+	@echo "ngrok inspector is now accessible at: https://ngrok.$(LOCAL_DOMAIN)"
+	@echo "#################################################################################"
+
+reconfigure-webhooks:
+	export WEBHOOKS_DOMAIN=$$(curl -s "https://ngrok.$(LOCAL_DOMAIN)/api/tunnels" | $(JQ) '.tunnels[0].public_url' - -r) && \
+	yq e '.api.plaid.webhooksDomain = strenv(WEBHOOKS_DOMAIN)' -i $(VALUES) && \
+	yq e '.api.stripe.webhooksDomain = strenv(WEBHOOKS_DOMAIN)' -i $(VALUES)
+	yq e '.api.stripe.webhooksEnabled = true' -i $(VALUES)
+	yq e '.api.plaid.webhooksEnabled = true' -i $(VALUES)
+	make deploy-mini-application
+
+disable-webhooks-mini:
+	yq e '.api.plaid.webhooksEnabled = false' -i $(VALUES)
+	yq e '.api.stripe.webhooksEnabled = false' -i $(VALUES)
+	make deploy-mini-application
+	$(KUBECTL) delete deploy/ngrok --namespace $(MINIKUBE_NAMESPACE)
+
+
+
+###################### POSTGRESQL ANALYTICS ##################################
+pghero-mini:
+	$(KUBECTL) apply -f $(PWD)/minikube/pghero.yaml \
+		--namespace $(MINIKUBE_NAMESPACE)
+	$(KUBECTL) rollout status deploy/pghero \
+		--namespace $(MINIKUBE_NAMESPACE) --timeout=60s
+	@echo "#################################################################################"
+	@echo "pghero dashboard is now accessible at: https://pghero.$(LOCAL_DOMAIN)"
+	@echo "#################################################################################"
+
+WORK_IMAGE_NAME=registry.$(LOCAL_DOMAIN)/work
+work-mini:
+	docker build \
+		--cache-from=$(WORK_IMAGE_NAME):latest \
+		-t $(WORK_IMAGE_NAME):latest \
+		-f Dockerfile.work .
+	docker push $(WORK_IMAGE_NAME):latest
+	$(KUBECTL) apply -f $(PWD)/minikube/work.yaml \
+		--namespace $(MINIKUBE_NAMESPACE)
+	$(KUBECTL) rollout status deploy/work \
+		--namespace $(MINIKUBE_NAMESPACE) --timeout=60s
+	@echo "#################################################################################"
+	@echo "gocraft/work dashboard is now accessible at: https://work.$(LOCAL_DOMAIN)"
+	@echo "#################################################################################"
