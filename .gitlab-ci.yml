@@ -1,96 +1,149 @@
+# This workflow rule might need to be tweaked once we are using bors to regulate builds. I think it will need another
+# exception for staging branches that bors creates.
+#workflow:
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "main"'
+#      when: always
+#    - if: '$CI_COMMIT_BRANCH =~ /(.tmp)/'
+#      when: never
+#    - if: '$CI_PIPELINE_SOURCE == "external_pull_request_event"'
+#      when: always
+#    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH != "main"'
+#      when: never
+
 stages:
+  - Release
   - Dependencies
-  - Build Javascript
-  - Test Javascript
+  - Build
+  - Test
+  - Documentation
   - Coverage
-  - Build Container
   - Publish Container
+  - Prepare
+  - Dry Run
   - Deploy
 
-workflow:
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
-      when: always
-    - if: '$CI_PIPELINE_SOURCE == "external_pull_request_event"'
-      when: always
-    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH != "main"'
-      when: never
+variables:
+  GO111MODULE: 'on'
+  GOFLAGS: '-mod=vendor'
 
-JS Dependencies:
+Release Testing:
+  only:
+    refs:
+      - tags
+  allow_failure: true
   needs: [ ]
-  stage: Dependencies
-  image: containers.monetr.dev/node:15.14.0-buster
+  stage: Release
+  image: containers.monetr.dev/ubuntu:20.04
   tags:
     - k8s:shared
   script:
-    - yarn install --no-lockfile # Will use my npm proxy/registry allowing for faster pulling of dependencies.
-  cache:
-    key: ${CI_COMMIT_SHA}
-    paths:
-      - ./node_modules
-    policy: push
+    - git --no-pager log --oneline $(git describe --tags --abbrev=0 @^)..@
 
-Build:
-  needs:
-    - "JS Dependencies"
-  stage: Build Javascript
-  variables:
-    ENVIRONMENT: Staging
-  image: containers.monetr.dev/node:15.14.0-buster
+Go Dependencies:
+  needs: [ ]
+  stage: Dependencies
+  image: containers.monetr.dev/golang:1.16.3
   tags:
     - k8s:shared
+    - arch:amd64
+  script:
+    - go mod vendor
+  cache:
+    key: go-${CI_COMMIT_SHA}
+    paths:
+      - $CI_PROJECT_DIR/vendor
+    policy: push
+
+Binary:
+  needs:
+    - "Go Dependencies"
+  stage: Build
+  image: containers.monetr.dev/golang:1.16.3
+  tags:
+    - k8s:shared
+    - arch:amd64
   script:
     - make build
   cache:
-    key: ${CI_COMMIT_SHA}
+    key: go-${CI_COMMIT_SHA}
     paths:
-      - ./build
-      - ./node_modules
+      - $CI_PROJECT_DIR/bin
+      - $CI_PROJECT_DIR/vendor
     policy: pull-push
 
-Test:
+Go Tests:
   needs:
-    - "JS Dependencies"
-  stage: Test Javascript
-  image: containers.monetr.dev/node:15.14.0-buster
+    - "Go Dependencies"
+  services:
+    - name: containers.monetr.dev/postgres:13
+      alias: postgres
+  variables:
+    POSTGRES_HOST: postgres
+    POSTGRES_PASSWORD: ""
+    POSTGRES_USER: api-testing
+    POSTGRES_DB: test-db
+    POSTGRES_HOST_AUTH_METHOD: trust
+  stage: Test
+  image: containers.monetr.dev/golang:1.16.3
   tags:
     - k8s:shared
+    - arch:amd64
+  before_script:
+    - make apply-schema-ci
   script:
-    - yarn coverage
+    - make test
   cache:
-    key: ${CI_COMMIT_SHA}
+    key: go-${CI_COMMIT_SHA}
     paths:
-      - ./node_modules
+      - $CI_PROJECT_DIR/bin
+      - $CI_PROJECT_DIR/vendor
     policy: pull
   artifacts:
-    name: "$CI_COMMIT_SHA-coverage-report"
+    name: "$CI_COMMIT_SHA-test-coverage"
     paths:
-      - ./reports
+      - ./coverage.txt
     expire_in: 7 days
 
+PostgreSQL Tests:
+  needs: [ ]
+  stage: Test
+  services:
+    - name: containers.monetr.dev/pgtest:2021.04.30
+      alias: postgres
+  image:
+    name: containers.monetr.dev/pgtest:latest
+    entrypoint: [ "" ]
+  tags:
+    - k8s:shared
+    - arch:amd64
+  variables:
+    POSTGRES_HOST: postgres
+    POSTGRES_PASSWORD: ""
+    POSTGRES_USER: postgres
+    POSTGRES_DB: test-db
+    POSTGRES_HOST_AUTH_METHOD: trust
+  before_script:
+    - sleep 5
+  script:
+    - make pg_test
+
 Yeet Coverage:
+  when: manual
   needs:
-    - "Test"
+    - "Go Tests"
   environment:
     name: DeepSource
   stage: Coverage
-  when: manual
-  image: ubuntu:20.04
+  image: ghcr.io/monetrapp/deepsource:latest
   tags:
     - k8s:shared
-  variables:
-    DEBIAN_FRONTEND: noninteractive
-  before_script:
-    - apt-get update
-    - apt-get install curl git-all -y
-    - curl https://deepsource.io/cli | sh
+    - arch:amd64
   script:
-    - DEEPSOURCE_DSN=$K8S_SECRET_DEEPSOURCE_DSN ./bin/deepsource report --analyzer test-coverage --key go --value-file ./coverage.txt
-  cache:
-    key: ${CI_COMMIT_SHA}
-    paths:
-      - ./coverage.txt
-    policy: pull
+    - export DEEPSOURCE_DSN=$K8S_SECRET_DEEPSOURCE_DSN
+    - deepsource report --analyzer test-coverage --key go --value-file ./coverage.txt
+  dependencies:
+    - "Go Tests"
 
 .docker_template: &docker_template
   only:
@@ -109,14 +162,62 @@ Yeet Coverage:
     - arch:amd64
   before_script:
     - apk add make git
+    - echo "$CONTAINERS_MONETR_PASS" | docker login containers.monetr.dev --username $CONTAINERS_MONETR_USER --password-stdin
 
-Docker:
-  when: manual
-  needs: []
+REST API:
+  needs:
+    - "Go Tests"
   stage: Publish Container
   <<: [ *docker_template ]
   script:
-    - make docker-build
+    - make docker-push
+
+Generate - Staging:
+  needs: [ ]
+  stage: Prepare
+  image: containers.monetr.dev/ubuntu:20.04
+  tags:
+    - k8s:shared
+    - arch:amd64
+  variables:
+    GOFLAGS: ''
+    ENVIRONMENT: Staging
+  script:
+    - make generate ENVIRONMENT=${ENVIRONMENT}
+  cache:
+    key: k8s-${CI_COMMIT_SHA}-${ENVIRONMENT}
+    paths:
+      - $CI_PROJECT_DIR/generated/${ENVIRONMENT}
+    policy: push
+  artifacts:
+    name: "k8s-${CI_COMMIT_SHA}-${ENVIRONMENT}"
+    paths:
+      - $CI_PROJECT_DIR/generated
+    expire_in: 7 days
+
+Dry - Staging:
+  only:
+    refs:
+      - main
+  environment:
+    name: Staging
+    url: https://api.staging.monetr.dev
+    deployment_tier: staging
+    action: prepare
+    kubernetes:
+      namespace: monetr-staging
+  needs:
+    - "Generate - Staging"
+    - "REST API"
+  stage: Dry Run
+  image: containers.monetr.dev/ubuntu:20.04
+  tags:
+    - monetr:staging
+  variables:
+    GOFLAGS: ''
+    ENVIRONMENT: Staging
+  script:
+    - make dry ENVIRONMENT=${ENVIRONMENT}
 
 Deploy - Staging:
   only:
@@ -124,21 +225,20 @@ Deploy - Staging:
       - main
   environment:
     name: Staging
-    url: https://app.staging.monetr.dev
+    url: https://api.staging.monetr.dev
+    deployment_tier: staging
+    action: start
+    kubernetes:
+      namespace: monetr-staging
   needs:
-    - "Build"
+    - "Dry - Staging"
+    - "Generate - Staging"
   stage: Deploy
   image: containers.monetr.dev/ubuntu:20.04
   tags:
-    - k8s:shared
+    - monetr:staging
   variables:
+    GOFLAGS: ''
     ENVIRONMENT: Staging
-  before_script:
-    - gcloud auth activate-service-account --key-file $GCS_SERVICE_ACCOUNT
   script:
-    - make deploy
-  cache:
-    key: ${CI_COMMIT_SHA}
-    paths:
-      - ./build
-    policy: pull
+    - make deploy ENVIRONMENT=${ENVIRONMENT}
