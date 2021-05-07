@@ -1,5 +1,5 @@
 DOCKER_REPOSITORY = containers.monetr.dev
-DOCKER_IMAGE = web-ui
+DOCKER_IMAGE = rest-api
 
 default-docker:
 	$(error Please run a specific target)
@@ -13,7 +13,13 @@ SHA_IMAGE_NAME = $(BASE_IMAGE):$(VERSION_TAG)
 LATEST_IMAGE_NAME = $(BASE_IMAGE):latest
 
 docker-build: wait-for-docker
-	docker build -t $(SHA_IMAGE_NAME) -t $(LATEST_IMAGE_NAME) -f Dockerfile .
+	docker build \
+		--cache-from=$(LATEST_IMAGE_NAME) \
+		--build-arg REVISION=$(RELEASE_REVISION) \
+		--build-arg BUILD_TIME=$(BUILD_TIME) \
+		-t $(SHA_IMAGE_NAME) \
+		-t $(LATEST_IMAGE_NAME) \
+		-f Dockerfile .
 
 docker-push: docker-build
 	docker push $(SHA_IMAGE_NAME)
