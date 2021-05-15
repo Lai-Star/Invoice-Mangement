@@ -1,0 +1,18 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+html, body {
+    height: 100%;
+    background-color: #d9d9d9;
+}
+
+*:focus {
+    outline: none;
+}
+
+button:focus {
+    outline: none;
+}
