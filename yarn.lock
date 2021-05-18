@@ -2199,10 +2199,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@stripe/react-stripe-js@1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@stripe/react-stripe-js/-/react-stripe-js-1.4.0.tgz#a67e72202297fc409dc2c8c4f3fb98e0b61fa06d"
-  integrity sha512-Pz5QmG8PgJ3pi8gOWxlngk+ns63p2L1Ds192fn55ykZNRKfGz3G6sfssUVThHn/NAt2Hp1eCEsy/hvlKnXJI6g==
+"@stripe/react-stripe-js@1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@stripe/react-stripe-js/-/react-stripe-js-1.4.1.tgz#884d59286fff00ba77389b32c045516f65d7a340"
+  integrity sha512-FjcVrhf72+9fUL3Lz3xi02ni9tzH1A1x6elXlr6tvBDgSD55oPJuodoP8eC7xTnBIKq0olF5uJvgtkJyDCdzjA==
   dependencies:
     prop-types "^15.7.2"
 
@@ -5233,10 +5233,10 @@ eslint-plugin-react@7.23.2:
     resolve "^2.0.0-next.3"
     string.prototype.matchall "^4.0.4"
 
-eslint-plugin-testing-library@4.5.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-testing-library/-/eslint-plugin-testing-library-4.5.0.tgz#f4573d1443a66791aab4d5384a9a8761ef685977"
-  integrity sha512-u9PqxME6B9rsdDgNA9+3GZGDUMqvoGWIySqnZclLzFMZaS3OXMhe9ohb0Iac2wXruHoKkzbrTMREQVpWy5zJCA==
+eslint-plugin-testing-library@4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-testing-library/-/eslint-plugin-testing-library-4.4.0.tgz#3624e3a4f3db04ba67e3e8a16345e1b48068f62c"
+  integrity sha512-uMsWi6/4V4GPNiGzoa2OaTQT32BezKxxTWSrJfy/JXk2AJLv1IEM6t1uN2j0qiNrL3tEbl1yl4tinaDFxj8YjA==
   dependencies:
     "@typescript-eslint/experimental-utils" "^4.21.0"
 
