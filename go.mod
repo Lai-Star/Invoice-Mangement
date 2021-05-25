@@ -24,7 +24,7 @@ require (
 	github.com/nleeper/goment v1.4.1
 	github.com/nyaruka/phonenumbers v1.0.69
 	github.com/pkg/errors v0.9.2-0.20201214064552-5dd12d0cfe7f
-	github.com/plaid/plaid-go v0.0.0-20210525182452-1d0b06713a96
+	github.com/plaid/plaid-go v0.0.0-20210514175636-fef172346e04
 	github.com/prometheus/client_golang v1.10.0
 	github.com/robfig/cron v1.2.0 // indirect
 	github.com/sendgrid/rest v2.6.3+incompatible // indirect
@@ -33,7 +33,7 @@ require (
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.7.0
-	github.com/stripe/stripe-go/v72 v72.45.0
+	github.com/stripe/stripe-go/v72 v72.46.0
 	github.com/swaggo/swag v1.7.0
 	github.com/teambition/rrule-go v1.7.0
 	github.com/xlzd/gotp v0.0.0-20181030022105-c8557ba2c119
