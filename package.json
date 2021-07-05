@@ -42,7 +42,7 @@
     "formik": "2.2.9",
     "fs-extra": "10.0.0",
     "identity-obj-proxy": "3.0.0",
-    "immer": "9.0.3",
+    "immer": "9.0.5",
     "immutable": "4.0.0-rc.12",
     "ini": "2.0.0",
     "is-svg": "4.3.1",
@@ -146,7 +146,7 @@
     "ts-loader": "9.2.3",
     "typescript": "4.3.5",
     "url-loader": "4.1.1",
-    "webpack": "5.42.1",
+    "webpack": "5.42.0",
     "webpack-bundle-analyzer": "4.4.2",
     "webpack-cli": "4.7.2",
     "webpack-dev-server": "3.11.2"
