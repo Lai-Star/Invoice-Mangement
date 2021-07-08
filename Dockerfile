@@ -1,4 +1,4 @@
-FROM node:16.2.0-buster AS builder
+FROM node:16.4.2-buster AS builder
 
 ARG ENVIRONMENT
 ENV ENVIRONMENT=$ENVIRONMENT
@@ -9,7 +9,7 @@ WORKDIR /work
 RUN yarn install
 RUN make build ENVIRONMENT=$ENVIRONMENT
 
-FROM nginx:1.21.0
+FROM nginx:1.21.1
 LABEL org.opencontainers.image.source=https://github.com/monetrapp/web-ui
 EXPOSE 80
 COPY --from=builder /work/build /usr/share/nginx/html
