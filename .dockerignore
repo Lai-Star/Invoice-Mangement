@@ -1,0 +1,9 @@
+# Ignore everything
+**
+node_modules
+
+# Allow the golang stuff.
+!/pkg/**
+!/go.mod
+!/go.sum
+
