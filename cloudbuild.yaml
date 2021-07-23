@@ -1,10 +1,5 @@
 steps:
-  - name: 'gcr.io/$PROJECT_ID/github.com/monetr/build-containers/ubuntu:20.04'
-    entrypoint: 'make'
-    args: [
-        'production',
-        'ENVIRONMENT=Production',
-    ]
-options:
-  env:
-    - 'PWD=/workspace'
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/github.com/monetr/rest-api:$COMMIT_SHA', '.' ]
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'push', 'gcr.io/$PROJECT_ID/github.com/monetr/rest-api:$COMMIT_SHA' ]
