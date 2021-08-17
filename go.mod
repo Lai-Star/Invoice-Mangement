@@ -8,7 +8,7 @@ require (
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/alicebob/miniredis/v2 v2.15.1
 	github.com/brianvoe/gofakeit/v6 v6.7.0
-	github.com/form3tech-oss/jwt-go v3.2.3+incompatible
+	github.com/form3tech-oss/jwt-go v3.2.5+incompatible
 	github.com/fsnotify/fsnotify v1.4.9
 	github.com/getsentry/sentry-go v0.11.0
 	github.com/go-git/go-git/v5 v5.4.2
@@ -16,6 +16,7 @@ require (
 	github.com/go-pg/pg/v10 v10.10.3
 	github.com/gocraft/work v0.5.1
 	github.com/gomodule/redigo v1.8.5
+	github.com/google/go-github/v38 v38.1.0
 	github.com/hashicorp/vault/api v1.1.1
 	github.com/iris-contrib/middleware/cors v0.0.0-20210110101738-6d0a4d799b5d
 	github.com/jarcoal/httpmock v1.0.8
