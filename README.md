@@ -1,24 +1,107 @@
-# web-ui
+# rest-api
 
-[![Gitlab pipeline status (self-hosted)](https://img.shields.io/gitlab/pipeline/monetr/web-ui/main?gitlab_url=https%3A%2F%2Fgitlab.elliotcourant.dev%2Fgithub.com&logo=gitlab)](https://gitlab.elliotcourant.dev/github.com/monetr/web-ui/-/pipelines)
-[![Node.js CI](https://github.com/monetr/web-ui/actions/workflows/node.js.yml/badge.svg)](https://github.com/monetr/web-ui/actions/workflows/node.js.yml)
-[![DeepSource](https://deepsource.io/gh/monetr/web-ui.svg/?label=active+issues&show_trend=true&token=xHI8Ef6A6rr1C_LlJ_sxzPzR)](https://deepsource.io/gh/monetr/web-ui/?ref=repository-badge)
-[![DeepSource](https://deepsource.io/gh/monetr/web-ui.svg/?label=resolved+issues&show_trend=true&token=xHI8Ef6A6rr1C_LlJ_sxzPzR)](https://deepsource.io/gh/monetr/web-ui/?ref=repository-badge)
+![Gitlab pipeline status (self-hosted)](https://img.shields.io/gitlab/pipeline/monetr/rest-api/main?gitlab_url=https%3A%2F%2Fgitlab.elliotcourant.dev%2Fgithub.com&logo=gitlab)
+[![DeepSource](https://deepsource.io/gh/monetr/rest-api.svg/?label=active+issues&show_trend=true&token=4x9L6ApemrQ6x80icvE9cEJl)](https://deepsource.io/gh/monetr/rest-api/?ref=repository-badge)
+[![DeepSource](https://deepsource.io/gh/monetr/rest-api.svg/?label=resolved+issues&show_trend=true&token=4x9L6ApemrQ6x80icvE9cEJl)](https://deepsource.io/gh/monetr/rest-api/?ref=repository-badge)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmonetr%2Frest-api.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmonetr%2Frest-api?ref=badge_shield)
 
-The web app for the budgeting application monetr.
+![image](https://user-images.githubusercontent.com/37967690/117526688-5158fa00-af8c-11eb-9695-6f735605625d.png)
+
+<!-- Test change fasddfasdf -->
+
+This is the REST API behind monetr's budgeting application.
+
+API documentation can be found here: https://docs.monetr.dev/
+
+Documentation is automatically generated with each commit to the main branch.
 
 ## Developing Locally
 
-Developing locally on it's own has no additional requirements outside of node. However if you want to run the UI locally
-and use its entire functionality then you will need to be running the rest of the application stack in minikube. See the
-REST API for details. You will need to run `make init-mini` from the REST API project first to get everything running,
-once that is complete you can run the following command from the WEB UI project directory.
+This is still a work in progress, but the entire REST API stack can be run locally and entirely in minikube.
+This has been mostly automated and can be initiated by running the following command:
 
 ```bash
-make deploy-web-ui # Will get the ingress and service setup as well as a dummy pod.
-make local-ui # Will tweak the service to forward to your local webpack dev server.
+make init-mini
 ```
 
-This will spawn a new tmux window, install any JS dependencies needed and will start the webpack dev server. You can
-then open a browser window to `https://app.monetr.mini` and see the application running. You can make changes to the
-application and see the changes reload.
+You will be prompted once for your password in a window; this is to add the certificate as trusted to macOS.
+
+This will allow you to access the REST API via `https://api.monetr.mini`.
+
+**NOTE:** This is still being tuned and is subject to change significantly. This also requires the following
+to be installed on your computer.
+- minikube
+- docker (Docker for Desktop not required)
+- hyperkit
+- kubectl
+- openssl (not the LibreSSL version)
+
+To my knowledge this also only currently works on macOS. But I plan on making it work on Linux in the future
+as well.
+There are some other tools that this make target relies on, but if they are not already present on your computer
+then they will be downloaded and installed into you `$API_PROJECT_FOLDER/bin` directory. 
+
+Running init-mini will also create a certificate to be used for TLS locally. On macOS this is added to your
+keychain as a trusted certificate so that way TLS will work locally as if it were in a real environment. This
+and anything else that is done as part of running `init-mini` can be un-done by running the following command:
+
+```bash
+make clean-mini
+```
+
+This will remove all of the generated files, trusted certificates, and dependencies that were pulled for running
+locally. It will also delete your minikube cluster to make sure the environment is completely clean.
+
+### Seeing Your Changes
+
+As you make changes to the code you can deploy your changes to the local minikube cluster by running:
+
+```bash
+make deploy-mini-application
+```
+
+This will build a new docker image from your current code as well as evaluate any changes made to the `values.local.yaml`
+file in your project directory and push those changes to minikube.
+
+If you want to do step debugging there is a shortcut in the makefile to do so. You will need to create a `config.yaml`
+file in your project directory with all the same settings you have specified in your `values.local.yaml` for everything
+to work properly. Once you have done that you can run the command below:
+
+```bash
+make local-api
+```
+
+This will spawn a new tmux window with a minikube tunnel in it. This is needed for the API to talk to the services it
+needs within the minikube cluster.
+This will also swap out the target for the API service in kubernetes with an endpoint pointed at your computer and at port
+4000. This way you can run a REST API instance locally through something like GoLand or VSCode and step debug API
+requests directly.
+
+### Testing Webhooks
+
+The API is meant to receive webhooks from both Plaid and Stripe as part of its normal functionality. To help make
+development for these APIs easier I have added an ngrok deployment that will allow external services to send 
+requests to your local REST API instance running in minikube.
+
+To enable this for local development run:
+
+```bash
+make webhooks-mini NGROK_AUTH=${YOUR_NGROK_TOKEN}
+```
+
+This will deploy ngrok locally within the minikube cluster and will forward traffic to the REST API service.
+You can see the ngrok inspector at `https://ngrok.monetr.mini` after this command has been run.
+
+To disable webhooks if you have enabled them:
+
+```bash
+make disable-webhooks-mini
+```
+
+This will update the `values.local.yaml` in your project directory and disable the webhook settings, it will then
+redeploy the REST API to minikube using the updated values file. Then it will delete the ngrok service that was
+previously deployed.
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmonetr%2Frest-api.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmonetr%2Frest-api?ref=badge_large)
