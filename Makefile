@@ -1,52 +1,133 @@
-
-# Make it so we can run commands from our dependencies directly.
-PATH:=$(PATH):$(PWD)/node_modules/.bin
-BUILD_DIR = $(PWD)/build
-PUBLIC_DIR = $(PWD)/public
-
-RELEASE_REVISION=$(shell git rev-parse HEAD)
+LOCAL_TMP = $(PWD)/tmp
+LOCAL_BIN = $(PWD)/bin
+NODE_MODULES_DIR = $(PWD)/node_modules
+NODE_MODULES_BIN = $(NODE_MODULES_DIR)/.bin
+VENDOR_DIR = $(PWD)/vendor
 BUILD_TIME=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
-ifndef ENVIRONMENT
-	ENVIRONMENT = Local
-endif
-ENV_LOWER = $(shell echo $(ENVIRONMENT) | tr A-Z a-z)
+RELEASE_REVISION=$(shell git rev-parse HEAD)
+MONETR_CLI_PACKAGE = github.com/monetr/rest-api/pkg/cmd
+COVERAGE_TXT = $(PWD)/coverage.txt
+LICENSE=$(LOCAL_BIN)/golicense
 
-dependencies:
-	yarn install
+PATH+=\b:$(GOPATH)/bin:$(LOCAL_BIN):$(NODE_MODULES_BIN)
+
+ifndef POSTGRES_DB
+POSTGRES_DB=postgres
+endif
+
+ifndef POSTGRES_USER
+POSTGRES_USER=postgres
+endif
+
+ifndef POSTGRES_HOST
+POSTGRES_HOST=localhost
+endif
+
+# Just a shorthand to print some colored text, makes it easier to read and tell the developer what all the makefile is
+# doing since its doing a ton.
+define infoMsg
+	@echo "\033[0;32m[$@] $(1)\033[0m"
+endef
+
+define warningMsg
+	@echo "\033[1;33m[$@] $(1)\033[0m"
+endef
+
+
+default: build test
+
+dependencies: go.mod go.sum
+	$(call infoMsg,Installing dependencies for monetrs rest-api)
+	go get ./...
+
+build: dependencies $(wildcard $(PWD)/pkg/**/*.go)
+	$(call infoMsg,Building rest-api binary)
+	go build -o $(LOCAL_BIN)/monetr $(MONETR_CLI_PACKAGE)
+
+test:
+	$(call infoMsg,Running go tests for monetr rest-api)
+ifndef CI
+	go run $(MONETR_CLI_PACKAGE) database migrate -d $(POSTGRES_DB) -U $(POSTGRES_USER) -H $(POSTGRES_HOST)
+endif
+	go test -race -v -coverprofile=$(COVERAGE_TXT) -covermode=atomic ./...
+	go tool cover -func=$(COVERAGE_TXT)
 
 clean:
-	rm -rf $(PWD)/node_modules || true
-	rm -rf $(PWD)/build || true
-	rm -rf $(BUILD_DIR)/* || true
+	echo $$PATH
+	rm -rf $(LOCAL_BIN) || true
+	rm -rf $(COVERAGE_TXT) || true
+	rm -rf $(NODE_MODULES_DIR) || true
+	rm -rf $(VENDOR_DIR) || true
+	rm -rf $(LOCAL_TMP) || true
 
-big-clean: clean
-	rm -rf $(PWD)/node_modules || true
+.PHONY: docs
+docs:
+	swag init -d pkg/controller -g controller.go --parseDependency --parseDepth 5 --parseInternal
 
-start: dependencies
-	RELEASE_REVISION=$(RELEASE_REVISION) MONETR_ENV=local yarn start
+docs-local: docs
+	redoc-cli serve $(PWD)/docs/swagger.yaml
 
-.PHONY: build
-build:
-	mkdir -p $(BUILD_DIR)
-	RELEASE_REVISION=$(RELEASE_REVISION) MONETR_ENV=$(ENV_LOWER) yarn build:production
-	cp $(PUBLIC_DIR)/favicon.ico $(BUILD_DIR)/
-	cp $(PUBLIC_DIR)/logo*.png $(BUILD_DIR)/
-	cp $(PUBLIC_DIR)/manifest.json $(BUILD_DIR)/
-	cp $(PUBLIC_DIR)/robots.txt $(BUILD_DIR)/
+docker:
+	docker build \
+		--build-arg REVISION=$(RELEASE_REVISION) \
+		--build-arg BUILD_TIME=$(BUILD_TIME) \
+		-t harder-rest-api -f Dockerfile .
 
+docker-work-web-ui:
+	docker build -t workwebui -f Dockerfile.work .
+
+$(LOCAL_BIN):
+	mkdir $(LOCAL_BIN)
+
+$(LOCAL_TMP):
+	mkdir $(LOCAL_TMP)
+
+$(LICENSE):
+	@if [ ! -f "$(LICENSE)" ]; then make install-$(LICENSE); fi
+
+LICENSE_REPO=https://github.com/mitchellh/golicense.git
+LICENSE_TMP=$(LOCAL_TMP)/golicense
+install-$(LICENSE): $(LOCAL_BIN) $(LOCAL_TMP)
+	$(call infoMsg,Installing golicense to $(LICENSE))
+	rm -rf $(LICENSE_TMP) || true
+	git clone $(LICENSE_REPO) $(LICENSE_TMP)
+	cd $(LICENSE_TMP) && go build -o $(LICENSE) .
+	rm -rf $(LICENSE_TMP) || true
+
+.PHONY: license
+ifdef GITHUB_TOKEN
+license: $(LICENSE) build
+	$(call infoMsg,Checking dependencies for open source licenses)
+	- $(LICENSE) $(PWD)/licenses.hcl $(LOCAL_BIN)/monetr
+else
+license:
+	$(call warningMsg,GITHUB_TOKEN is required to check licenses)
+endif
+
+ifdef GITLAB_CI
+include Makefile.gitlab-ci
 include Makefile.deploy
-include Makefile.docker
+endif
+
+ifdef GITHUB_ACTION
+include Makefile.github-actions
+endif
+
 include Makefile.release
+include Makefile.docker
+
+ifndef CI
+include Makefile.tinker
 include Makefile.local
+endif
 
-# This is something to help debug CI issues locally. It will run a container and mount the current directory
-# locally. Its the same container used in the pipelines so it should be pretty close to the same for debugging.
-debug-ci:
-	docker run \
-		-w /build \
-		-v $(PWD):/build \
-		-it containers.monetr.dev/node:15.14.0-buster \
-		/bin/bash
+ifndef POSTGRES_PORT
+POSTGRES_PORT=5432
+endif
 
+migrate:
+	@go run $(MONETR_CLI_PACKAGE) database migrate -d $(POSTGRES_DB) -U $(POSTGRES_USER) -H $(POSTGRES_HOST) -P $(POSTGRES_PORT) -W $(POSTGRES_PASSWORD)
 
-include Makefile.$(ENV_LOWER)
+beta-code: migrate
+	@go run $(MONETR_CLI_PACKAGE) beta new-code -d $(POSTGRES_DB) -U $(POSTGRES_USER) -H $(POSTGRES_HOST) -P $(POSTGRES_PORT) -W $(POSTGRES_PASSWORD)
+
