@@ -1,9 +1,8 @@
 name: Daily Release
 
 on:
-  push:
-    branches:
-      - acceptance
+  schedule:
+    - cron: 0 23 * * *
   workflow_dispatch: { }
 
 jobs:
@@ -15,11 +14,3 @@ jobs:
         with:
           ref: 'main'
       - run: GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} make release
-      - name: Create Sentry release
-        uses: getsentry/action-release@v1
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-          SENTRY_PROJECT: rest-api
-        with:
-          environment: acceptance
