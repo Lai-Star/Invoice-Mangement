@@ -81,7 +81,7 @@
     "resolve": "1.20.0",
     "resolve-url-loader": "4.0.0",
     "rrule": "2.6.8",
-    "sass": "1.39.2",
+    "sass": "1.39.0",
     "selector-action": "1.2.0",
     "semver": "7.3.5",
     "terser-webpack-plugin": "5.2.3",
@@ -148,7 +148,7 @@
     "ts-loader": "9.2.5",
     "typescript": "4.4.2",
     "url-loader": "4.1.1",
-    "webpack": "5.52.0",
+    "webpack": "5.52.1",
     "webpack-bundle-analyzer": "4.4.2",
     "webpack-cli": "4.8.0",
     "webpack-dev-server": "4.1.1"
