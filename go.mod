@@ -5,7 +5,7 @@ go 1.17
 require (
 	cloud.google.com/go/logging v1.4.2
 	github.com/MicahParks/keyfunc v0.4.0
-	github.com/OneOfOne/xxhash v1.2.8
+	github.com/OneOfOne/xxhash v1.2.2
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/alicebob/miniredis/v2 v2.15.1
 	github.com/brianvoe/gofakeit/v6 v6.7.1
@@ -28,7 +28,7 @@ require (
 	github.com/nleeper/goment v1.4.2
 	github.com/nyaruka/phonenumbers v1.0.71
 	github.com/pkg/errors v0.9.2-0.20201214064552-5dd12d0cfe7f
-	github.com/plaid/plaid-go v1.0.0
+	github.com/plaid/plaid-go v1.2.0
 	github.com/prometheus/client_golang v1.11.0
 	github.com/robfig/cron v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.8.1
