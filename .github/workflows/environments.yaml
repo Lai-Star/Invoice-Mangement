@@ -17,7 +17,7 @@ jobs:
       - name: fetch
         run: git fetch --prune --unshallow
       - name: Push To Acceptance
-        run: make push ENVIRONMENT=Acceptance
+        run: git push origin $(go run github.com/monetr/rest-api/tools/releaser --since=-24h):acceptance
   release-dog:
     name: Dog Food
     runs-on: ubuntu-latest
@@ -29,7 +29,7 @@ jobs:
       - name: fetch
         run: git fetch --prune --unshallow
       - name: Push To Dog Food
-        run: make push ENVIRONMENT=Dog
+        run: git push origin $(go run github.com/monetr/rest-api/tools/releaser --since=-24h):dog
   release-production:
     name: Production
     runs-on: ubuntu-latest
@@ -41,4 +41,4 @@ jobs:
       - name: fetch
         run: git fetch --prune --unshallow
       - name: Push To Production
-        run: make push ENVIRONMENT=Production SINCE=48h
+        run: git push origin $(go run github.com/monetr/rest-api/tools/releaser --since=-48h):production
