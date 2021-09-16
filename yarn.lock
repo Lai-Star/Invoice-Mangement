@@ -2631,10 +2631,10 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
-"@pmmmwh/react-refresh-webpack-plugin@0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@pmmmwh/react-refresh-webpack-plugin/-/react-refresh-webpack-plugin-0.5.0.tgz#ca24a418c3b69cb87fd0dd95cca2c4bfa5683904"
-  integrity sha512-VRmiCnVHudkmzGh4gD1eW42matvNL8Y0OZ8FCEWs79iPTldihsuEi5GTMFjU+UfKRQxinN2e0/MDhJzExuiIyA==
+"@pmmmwh/react-refresh-webpack-plugin@0.5.1":
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/@pmmmwh/react-refresh-webpack-plugin/-/react-refresh-webpack-plugin-0.5.1.tgz#7e98d6f22c360e1dd00909f5fa9d0f6ecc263292"
+  integrity sha512-ccap6o7+y5L8cnvkZ9h8UXCGyy2DqtwCD+/N3Yru6lxMvcdkPKtdx13qd7sAC9s5qZktOmWf9lfUjsGOvSdYhg==
   dependencies:
     ansi-html-community "^0.0.8"
     common-path-prefix "^3.0.0"
@@ -12795,10 +12795,10 @@ webpack-sources@^3.2.0:
   resolved "https://registry.yarnpkg.com/webpack-sources/-/webpack-sources-3.2.0.tgz#b16973bcf844ebcdb3afde32eda1c04d0b90f89d"
   integrity sha512-fahN08Et7P9trej8xz/Z7eRu8ltyiygEo/hnRi9KqBUs80KeDcnf96ZJo++ewWd84fEf3xSX9bp4ZS9hbw0OBw==
 
-webpack@5.52.1:
-  version "5.52.1"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.52.1.tgz#2dc1d9029ecb7acfb80da7bf67baab67baa517a7"
-  integrity sha512-wkGb0hLfrS7ML3n2xIKfUIwHbjB6gxwQHyLmVHoAqEQBw+nWo+G6LoHL098FEXqahqximsntjBLuewStrnJk0g==
+webpack@5.53.0:
+  version "5.53.0"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.53.0.tgz#f463cd9c6fc1356ae4b9b7ac911fd1f5b2df86af"
+  integrity sha512-RZ1Z3z3ni44snoWjfWeHFyzvd9HMVYDYC5VXmlYUT6NWgEOWdCNpad5Fve2CzzHoRED7WtsKe+FCyP5Vk4pWiQ==
   dependencies:
     "@types/eslint-scope" "^3.7.0"
     "@types/estree" "^0.0.50"
