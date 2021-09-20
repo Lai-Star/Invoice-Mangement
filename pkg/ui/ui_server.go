@@ -1,0 +1,49 @@
+//+build ui
+
+package ui
+
+import (
+	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/context"
+	"github.com/kataras/iris/v12/core/router"
+	"github.com/monetr/rest-api/pkg/application"
+	"github.com/monetr/rest-api/pkg/config"
+	"net/http"
+)
+
+var (
+	_ application.Controller = &UIController{}
+)
+
+type UIController struct {
+	configuration config.Configuration
+}
+
+func NewUIController() *UIController {
+	return &UIController{}
+}
+
+func (c *UIController) RegisterRoutes(app *iris.Application) {
+	app.PartyFunc("/", func(p router.Party) {
+		p.Any("/api/*", func(ctx *context.Context) {
+			ctx.Next()
+			ctx.StatusCode(http.StatusNotFound)
+			return
+		})
+
+		p.Get("/config.json", func(ctx *context.Context) {
+			ctx.JSONP(map[string]interface{}{
+				"apiUrl": "/api",
+			})
+		})
+
+		fileHandler := iris.FileServer(http.FS(builtUi), iris.DirOptions{
+			IndexName: "index.html",
+			SPA:       true,
+		})
+
+		app.Get("/*", func(ctx iris.Context) {
+			fileHandler(ctx)
+		})
+	})
+}
