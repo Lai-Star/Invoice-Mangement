@@ -1,6 +1,6 @@
 status = [
     "Test",
-    "Build"
+    "Container"
 ]
 
 [committer]
