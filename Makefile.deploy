@@ -1,19 +1,11 @@
-
 default-deploy:
-	$(error Please run a specific target)
+	echo "Please run a specific target."
 
-ifndef ENV_LOWER
-$(error Envrionment not properly specicfied)
-endif
+ENVIRONMENT_DIR=$(PWD)/generated/$(ENV_LOWER)
+NAMESPACE = monetr-$(ENV_LOWER)
+dry:
+	kubectl apply -f $(ENVIRONMENT_DIR) -n $(NAMESPACE) --dry-run=server
 
-BUCKET_NAME = gs://monetr-$(ENV_LOWER)
-BUILD_DIR = $(PWD)/build
-
-ifneq ($(ENVIRONMENT), "Local")
 deploy:
-	cp $(PWD)/config.$(ENV_LOWER).json $(BUILD_DIR)/config.json
-	gsutil cp -e -r -z js $(BUILD_DIR)/* $(BUCKET_NAME)
-else
-deploy:
-	echo "Work in progress"
-endif
+	kubectl apply -f $(ENVIRONMENT_DIR) -n $(NAMESPACE)
+	kubectl rollout status deploy/rest-api -n $(NAMESPACE) --timeout=120s
