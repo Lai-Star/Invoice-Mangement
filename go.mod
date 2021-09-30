@@ -26,14 +26,14 @@ require (
 	github.com/nleeper/goment v1.4.2
 	github.com/nyaruka/phonenumbers v1.0.71
 	github.com/pkg/errors v0.9.2-0.20201214064552-5dd12d0cfe7f
-	github.com/plaid/plaid-go v1.4.0
+	github.com/plaid/plaid-go v1.3.0
 	github.com/prometheus/client_golang v1.11.0
 	github.com/robfig/cron v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0
-	github.com/stripe/stripe-go/v72 v72.65.0
+	github.com/stripe/stripe-go/v72 v72.67.0
 	github.com/teambition/rrule-go v1.7.2
 	github.com/vmihailenco/msgpack/v5 v5.3.4
 	github.com/xlzd/gotp v0.0.0-20181030022105-c8557ba2c119
