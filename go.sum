@@ -122,8 +122,6 @@ github.com/bketelsen/crypt v0.0.4/go.mod h1:aI6NrJ0pMGgvZKL1iVgXLnfIFJtfV+bKCoqO
 github.com/blang/semver/v4 v4.0.0/go.mod h1:IbckMUScFkM3pff0VJDNKRiT6TG/YpiHIM2yvyW5YoQ=
 github.com/brianvoe/gofakeit/v6 v6.8.0 h1:qAAlgNUqnRc/CU04WwBPspE5cAghce2YHRYihIKv2gI=
 github.com/brianvoe/gofakeit/v6 v6.8.0/go.mod h1:palrJUk4Fyw38zIFB/uBZqsgzW5VsNllhHKKwAebzew=
-github.com/brianvoe/gofakeit/v6 v6.9.0 h1:UCGhPCKLiqBc910TKS7LcOGf74NozftibFCbGIS6GZQ=
-github.com/brianvoe/gofakeit/v6 v6.9.0/go.mod h1:palrJUk4Fyw38zIFB/uBZqsgzW5VsNllhHKKwAebzew=
 github.com/cenkalti/backoff/v3 v3.0.0 h1:ske+9nBpD9qZsTBoF41nW5L+AIuFBKMeze18XQ3eG1c=
 github.com/cenkalti/backoff/v3 v3.0.0/go.mod h1:cIeZDE3IrqwwJl6VUwCN6trj1oXrTS4rc0ij+ULvLYs=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
@@ -642,6 +640,8 @@ github.com/pkg/errors v0.9.2-0.20201214064552-5dd12d0cfe7f/go.mod h1:bwawxfHBFNV
 github.com/pkg/sftp v1.10.1/go.mod h1:lYOWFsE0bwd1+KfKJaKeuokY15vzFx25BLbzYYoAxZI=
 github.com/plaid/plaid-go v1.3.0 h1:oZNYqUV4kAJKECUfOtlruTc8BqDxb5LvaKL2wWr6Sdo=
 github.com/plaid/plaid-go v1.3.0/go.mod h1:jsPs/+TSYwDPNxMhY2uwlpDUJBnqppGg+pNXNgdITc0=
+github.com/plaid/plaid-go v1.4.0 h1:sdZeXaoCJV+1rYk92C7yjAOnBXWPSn2d871I8LTIuJg=
+github.com/plaid/plaid-go v1.4.0/go.mod h1:jsPs/+TSYwDPNxMhY2uwlpDUJBnqppGg+pNXNgdITc0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/posener/complete v1.1.1/go.mod h1:em0nMJCgc9GFtwrmVmEMR/ZL6WyhyjMBndrE9hABlRI=
