@@ -1,3 +1,9 @@
+# Ignore everything
+**
 node_modules
-bin
-tmp
+
+# Allow the golang stuff.
+!/pkg/**
+!/go.mod
+!/go.sum
+
