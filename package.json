@@ -13,7 +13,7 @@
     "@sentry/react": "6.13.2",
     "@sentry/tracing": "6.13.2",
     "@stripe/react-stripe-js": "1.5.0",
-    "@stripe/stripe-js": "1.19.0",
+    "@stripe/stripe-js": "1.19.1",
     "@svgr/webpack": "5.5.0",
     "@testing-library/jest-dom": "5.14.1",
     "@testing-library/react": "12.1.1",
@@ -148,7 +148,7 @@
     "ts-loader": "9.2.6",
     "typescript": "4.4.3",
     "url-loader": "4.1.1",
-    "webpack": "5.56.1",
+    "webpack": "5.55.0",
     "webpack-bundle-analyzer": "4.4.2",
     "webpack-cli": "4.8.0",
     "webpack-dev-server": "4.3.0"
