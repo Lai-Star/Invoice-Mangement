@@ -13,10 +13,10 @@
     "@sentry/react": "6.13.2",
     "@sentry/tracing": "6.13.2",
     "@stripe/react-stripe-js": "1.5.0",
-    "@stripe/stripe-js": "1.19.0",
+    "@stripe/stripe-js": "1.19.1",
     "@svgr/webpack": "5.5.0",
     "@testing-library/jest-dom": "5.14.1",
-    "@testing-library/react": "12.1.1",
+    "@testing-library/react": "12.1.2",
     "@testing-library/user-event": "13.2.1",
     "@typescript-eslint/eslint-plugin": "4.32.0",
     "@typescript-eslint/parser": "4.32.0",
@@ -99,7 +99,7 @@
     "clean": "rm -rf build/* || true",
     "start": "MONETR_ENV=${MONETR_ENV:=local} webpack serve --hot --mode development",
     "test": "jest",
-    "coverage": "jest --coverage --collectCoverageFrom=src/**/*.{js,jsx,ts,tsx} --coverageDirectory=./reports"
+    "coverage": "jest --coverage --collectCoverageFrom=ui/**/*.{js,jsx,ts,tsx} --coverageDirectory=./reports"
   },
   "eslintConfig": {
     "extends": [
@@ -125,7 +125,7 @@
     "@babel/preset-react": "7.14.5",
     "@hot-loader/react-dom": "17.0.1",
     "@tailwindcss/postcss7-compat": "npm:@tailwindcss/postcss7-compat",
-    "@types/react": "17.0.26",
+    "@types/react": "17.0.27",
     "@types/react-dom": "17.0.9",
     "@types/react-google-recaptcha": "2.1.2",
     "@types/react-redux": "7.1.18",
@@ -148,29 +148,29 @@
     "ts-loader": "9.2.6",
     "typescript": "4.4.3",
     "url-loader": "4.1.1",
-    "webpack": "5.55.0",
+    "webpack": "5.56.1",
     "webpack-bundle-analyzer": "4.4.2",
     "webpack-cli": "4.8.0",
     "webpack-dev-server": "4.3.1"
   },
   "jest": {
     "roots": [
-      "<rootDir>/src"
+      "<rootDir>/ui"
     ],
     "collectCoverageFrom": [
-      "src/**/*.{js,jsx,ts,tsx}",
-      "!src/**/*.d.ts"
+      "ui/**/*.{js,jsx,ts,tsx}",
+      "!ui/**/*.d.ts"
     ],
     "setupFiles": [
       "<rootDir>/testSetup.js",
       "react-app-polyfill/jsdom"
     ],
     "setupFilesAfterEnv": [
-      "<rootDir>/src/setupTests.js"
+      "<rootDir>/ui/setupTests.js"
     ],
     "testMatch": [
-      "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
-      "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
+      "<rootDir>/ui/**/__tests__/**/*.{js,jsx,ts,tsx}",
+      "<rootDir>/ui/**/*.{spec,test}.{js,jsx,ts,tsx}"
     ],
     "testEnvironment": "jsdom",
     "transform": {
@@ -183,7 +183,7 @@
       "^.+\\.module\\.(css|sass|scss)$"
     ],
     "modulePaths": [
-      "<rootDir>/src"
+      "<rootDir>/ui"
     ],
     "moduleNameMapper": {
       "^react-native$": "react-native-web",

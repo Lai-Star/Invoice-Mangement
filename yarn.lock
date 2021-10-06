@@ -2784,10 +2784,10 @@
   dependencies:
     prop-types "^15.7.2"
 
-"@stripe/stripe-js@1.19.0":
-  version "1.19.0"
-  resolved "https://registry.yarnpkg.com/@stripe/stripe-js/-/stripe-js-1.19.0.tgz#2704adeabcca4ac64d3a5168b2705b165b89e633"
-  integrity sha512-HycB9mnCCaontVCH9tnRoGVofp4H2c+m518e3g5vLVGmmHVI7qOSI71TGbJ0XoHdfFf2EN2HUAGMCNT5IiiuNQ==
+"@stripe/stripe-js@1.19.1":
+  version "1.19.1"
+  resolved "https://registry.yarnpkg.com/@stripe/stripe-js/-/stripe-js-1.19.1.tgz#51017bb1c6e12f0e74747534667e42e77b2c9978"
+  integrity sha512-gvaQ51FXHHKMypXMlSPZbpb7e5671oqySqEfU2MviAQCsikV/+vnvPPxOged4RvNwNM7v4ocsKadQwqIwPhgrQ==
 
 "@surma/rollup-plugin-off-main-thread@^1.4.1":
   version "1.4.2"
@@ -2957,10 +2957,10 @@
     lodash "^4.17.15"
     redent "^3.0.0"
 
-"@testing-library/react@12.1.1":
-  version "12.1.1"
-  resolved "https://registry.yarnpkg.com/@testing-library/react/-/react-12.1.1.tgz#e693943aa48d0190099acdc3928a751d73bcf7d5"
-  integrity sha512-JDyWbvMuedEpP6SPL4Cvbhk59TVxQ3pwuR6ZfJHdRsHuxDd/ziSMA3nVM3fViaSbsQhuQFE/mvFrPrvQbL5kRQ==
+"@testing-library/react@12.1.2":
+  version "12.1.2"
+  resolved "https://registry.yarnpkg.com/@testing-library/react/-/react-12.1.2.tgz#f1bc9a45943461fa2a598bb4597df1ae044cfc76"
+  integrity sha512-ihQiEOklNyHIpo2Y8FREkyD1QAea054U0MVbwH1m8N9TxeFz+KoJ9LkqoKqJlzx2JDm56DVwaJ1r36JYxZM05g==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@testing-library/dom" "^8.0.0"
@@ -3230,10 +3230,10 @@
     "@types/scheduler" "*"
     csstype "^3.0.2"
 
-"@types/react@17.0.26":
-  version "17.0.26"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.26.tgz#960ea4b3518cc154ed7df3b35656c508df653331"
-  integrity sha512-MXxuXrH2xOcv5cp/su4oz69dNQnSA90JjFw5HBd5wifw6Ihi94j7dRJm7qNsB30tnruXSCPc9qmlhGop4nh9Hw==
+"@types/react@17.0.27":
+  version "17.0.27"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.27.tgz#6498ed9b3ad117e818deb5525fa1946c09f2e0e6"
+  integrity sha512-zgiJwtsggVGtr53MndV7jfiUESTqrbxOcBvwfe6KS/9bzaVPCTDieTWnFNecVNx6EAaapg5xsLLWFfHHR437AA==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -12891,10 +12891,10 @@ webpack-sources@^3.2.0:
   resolved "https://registry.yarnpkg.com/webpack-sources/-/webpack-sources-3.2.0.tgz#b16973bcf844ebcdb3afde32eda1c04d0b90f89d"
   integrity sha512-fahN08Et7P9trej8xz/Z7eRu8ltyiygEo/hnRi9KqBUs80KeDcnf96ZJo++ewWd84fEf3xSX9bp4ZS9hbw0OBw==
 
-webpack@5.55.0:
-  version "5.55.0"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.55.0.tgz#77e4d90c6db6764623f91cb1549cdcda9b9f8a84"
-  integrity sha512-/1LyoAG+4+YRt+RLN3H2cz4dcw8+iO/GwKhL54GQDmqONCi0ZISXZF6aCCrCRDJFK685h+RGLCZd61Y+SEqdWQ==
+webpack@5.56.1:
+  version "5.56.1"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-5.56.1.tgz#e39d1d1f1acdb6f07e346f74b7dcfe323da4ded9"
+  integrity sha512-MRbTPooHJuSAfbx7Lh/qEMRUe/d0p4cRj2GPo/fq+4JUeR/+Q1EfLvS1lexslbMcJZyPXxxz/k/NzVepkA5upA==
   dependencies:
     "@types/eslint-scope" "^3.7.0"
     "@types/estree" "^0.0.50"
