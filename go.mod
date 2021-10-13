@@ -24,7 +24,7 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/nleeper/goment v1.4.2
-	github.com/nyaruka/phonenumbers v1.0.71
+	github.com/nyaruka/phonenumbers v1.0.72
 	github.com/pkg/errors v0.9.2-0.20201214064552-5dd12d0cfe7f
 	github.com/plaid/plaid-go v1.4.0
 	github.com/prometheus/client_golang v1.11.0
@@ -38,7 +38,7 @@ require (
 	github.com/vmihailenco/msgpack/v5 v5.3.4
 	github.com/xlzd/gotp v0.0.0-20181030022105-c8557ba2c119
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
-	google.golang.org/genproto v0.0.0-20211001223012-bfb93cce50d9
+	google.golang.org/genproto v0.0.0-20211013025323-ce878158c4d4
 	gopkg.in/ezzarghili/recaptcha-go.v4 v4.3.0
 )
 
