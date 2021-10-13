@@ -2955,16 +2955,16 @@ atob@^2.1.2:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
-autoprefixer@10.3.7:
-  version "10.3.7"
-  resolved "https://registry.yarnpkg.com/autoprefixer/-/autoprefixer-10.3.7.tgz#cef2562058406bd378c94aacda36bb46a97b3186"
-  integrity sha512-EmGpu0nnQVmMhX8ROoJ7Mx8mKYPlcUHuxkwrRYEYMz85lu7H09v8w6R1P0JPdn/hKU32GjpLBFEOuIlDWCRWvg==
+autoprefixer@10.3.6:
+  version "10.3.6"
+  resolved "https://registry.yarnpkg.com/autoprefixer/-/autoprefixer-10.3.6.tgz#537c8a046e32ec46bfe528bcc9e2a5f2d87cd4c4"
+  integrity sha512-3bDjTfF0MfZntwVCSd18XAT2Zndufh3Mep+mafbzdIQEeWbncVRUVDjH8/EPANV9Hq40seJ24QcYAyhUsFz7gQ==
   dependencies:
-    browserslist "^4.17.3"
-    caniuse-lite "^1.0.30001264"
+    browserslist "^4.17.1"
+    caniuse-lite "^1.0.30001260"
     fraction.js "^4.1.1"
+    nanocolors "^0.2.8"
     normalize-range "^0.1.2"
-    picocolors "^0.2.1"
     postcss-value-parser "^4.1.0"
 
 autoprefixer@^9, autoprefixer@^9.6.1:
@@ -3391,7 +3391,7 @@ browserslist@4.14.2:
     escalade "^3.0.2"
     node-releases "^1.1.61"
 
-browserslist@^4.0.0, browserslist@^4.12.0, browserslist@^4.14.5, browserslist@^4.16.0, browserslist@^4.16.6, browserslist@^4.17.3, browserslist@^4.6.4:
+browserslist@^4.0.0, browserslist@^4.12.0, browserslist@^4.14.5, browserslist@^4.16.0, browserslist@^4.16.6, browserslist@^4.17.1, browserslist@^4.17.3, browserslist@^4.6.4:
   version "4.17.3"
   resolved "https://registry.yarnpkg.com/browserslist/-/browserslist-4.17.3.tgz#2844cd6eebe14d12384b0122d217550160d2d624"
   integrity sha512-59IqHJV5VGdcJZ+GZ2hU5n4Kv3YiASzW6Xk5g9tf5a/MAzGeFwgGWU39fVzNIOVcgB3+Gp+kiQu0HEfTVU/3VQ==
@@ -3533,7 +3533,7 @@ caniuse-api@^3.0.0:
     lodash.memoize "^4.1.2"
     lodash.uniq "^4.5.0"
 
-caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001125, caniuse-lite@^1.0.30001264:
+caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001125, caniuse-lite@^1.0.30001260, caniuse-lite@^1.0.30001264:
   version "1.0.30001265"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001265.tgz#0613c9e6c922e422792e6fcefdf9a3afeee4f8c3"
   integrity sha512-YzBnspggWV5hep1m9Z6sZVLOt7vrju8xWooFAgN6BA5qvy98qPAPb7vNUzypFaoh2pb3vlfzbDO8tB57UPGbtw==
@@ -8185,6 +8185,11 @@ nanocolors@^0.1.12:
   resolved "https://registry.yarnpkg.com/nanocolors/-/nanocolors-0.1.12.tgz#8577482c58cbd7b5bb1681db4cf48f11a87fd5f6"
   integrity sha512-2nMHqg1x5PU+unxX7PGY7AuYxl2qDx7PSrTRjizr8sxdd3l/3hBuWWaki62qmtYm2U5i4Z5E7GbjlyDFhs9/EQ==
 
+nanocolors@^0.2.8:
+  version "0.2.13"
+  resolved "https://registry.yarnpkg.com/nanocolors/-/nanocolors-0.2.13.tgz#dfd1ed0bfab05e9fe540eb6874525f0a1684099b"
+  integrity sha512-0n3mSAQLPpGLV9ORXT5+C/D4mwew7Ebws69Hx4E2sgz2ZA5+32Q80B9tL8PbL7XHnRDiAxH/pnrUJ9a4fkTNTA==
+
 nanoid@^3.1.28:
   version "3.1.29"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.29.tgz#214fb2d7a33e1a5bef4757b779dfaeb6a4e5aeb4"
@@ -9309,10 +9314,10 @@ postcss-load-config@^3.1.0:
     lilconfig "^2.0.3"
     yaml "^1.10.2"
 
-postcss-loader@6.1.1:
-  version "6.1.1"
-  resolved "https://registry.yarnpkg.com/postcss-loader/-/postcss-loader-6.1.1.tgz#58dd0a3accd9bc87cc52eff75244db578d11301a"
-  integrity sha512-lBmJMvRh1D40dqpWKr9Rpygwxn8M74U9uaCSeYGNKLGInbk9mXBt1ultHf2dH9Ghk6Ue4UXlXWwGMH9QdUJ5ug==
+postcss-loader@6.2.0:
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/postcss-loader/-/postcss-loader-6.2.0.tgz#714370a3f567141cf4cadcdf9575f5234d186bc5"
+  integrity sha512-H9hv447QjQJVDbHj3OUdciyAXY3v5+UDduzEytAlZCVHCpNAAg/mCSwhYYqZr9BiGYhmYspU8QXxZwiHTLn3yA==
   dependencies:
     cosmiconfig "^7.0.0"
     klona "^2.0.4"
