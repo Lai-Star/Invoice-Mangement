@@ -62,7 +62,7 @@
     "postcss-normalize": "10.0.1",
     "postcss-preset-env": "6.7.0",
     "postcss-safe-parser": "6.0.0",
-    "prompts": "2.4.2",
+    "prompts": "2.4.1",
     "prop-types": "15.7.2",
     "react": "17.0.2",
     "react-app-polyfill": "2.0.0",
@@ -87,7 +87,7 @@
     "semver": "7.3.5",
     "terser-webpack-plugin": "5.2.4",
     "ts-pnp": "1.2.0",
-    "web-vitals": "2.1.0",
+    "web-vitals": "2.1.2",
     "webpack-manifest-plugin": "4.0.2",
     "workbox-webpack-plugin": "6.3.0"
   },
