@@ -3,16 +3,15 @@ package platypus
 import (
 	"context"
 	"encoding/json"
-	"sync"
-	"sync/atomic"
-	"time"
-
 	"github.com/MicahParks/keyfunc"
 	"github.com/getsentry/sentry-go"
 	"github.com/monetr/monetr/pkg/internal/myownsanity"
 	"github.com/pkg/errors"
 	"github.com/plaid/plaid-go/plaid"
 	"github.com/sirupsen/logrus"
+	"sync"
+	"sync/atomic"
+	"time"
 )
 
 type WebhookVerificationKey struct {
@@ -49,7 +48,7 @@ func NewWebhookVerificationKeyFromPlaid(input plaid.JWKPublicKey) (WebhookVerifi
 }
 
 type WebhookVerification interface {
-	GetVerificationKey(ctx context.Context, keyId string) (*keyfunc.JWKs, error)
+	GetVerificationKey(ctx context.Context, keyId string) (*keyfunc.JWKS, error)
 	Close() error
 }
 
@@ -74,7 +73,7 @@ func NewInMemoryWebhookVerification(log *logrus.Entry, plaid Platypus, cleanupIn
 
 type keyCacheItem struct {
 	expiration  time.Time
-	keyFunction *keyfunc.JWKs
+	keyFunction *keyfunc.JWKS
 }
 
 type memoryWebhookVerification struct {
@@ -87,7 +86,7 @@ type memoryWebhookVerification struct {
 	closer        chan chan error
 }
 
-func (m *memoryWebhookVerification) GetVerificationKey(ctx context.Context, keyId string) (*keyfunc.JWKs, error) {
+func (m *memoryWebhookVerification) GetVerificationKey(ctx context.Context, keyId string) (*keyfunc.JWKS, error) {
 	if atomic.LoadUint32(&m.closed) > 0 {
 		return nil, errors.New("webhook verification is closed")
 	}
@@ -142,7 +141,7 @@ func (m *memoryWebhookVerification) GetVerificationKey(ctx context.Context, keyI
 
 	var jwksJSON json.RawMessage = encodedKeys
 
-	jwksFunc, err := keyfunc.NewJSON(jwksJSON)
+	jwksFunc, err := keyfunc.New(jwksJSON)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create key function")
 	}
