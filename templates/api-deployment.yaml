@@ -85,13 +85,18 @@ spec:
             - name: metrics
               containerPort: {{ .Values.api.metricsPort }}
               protocol: TCP
+            {{- if .Values.monolithDeployment }}
+            - name: ui
+              containerPort: 3000
+              protocol: TCP
+          {{- end }}
           livenessProbe:
             httpGet:
-              path: /api/health
+              path: /health
               port: http
           readinessProbe:
             httpGet:
-              path: /api/health
+              path: /health
               port: http
           volumeMounts:
             - mountPath: /etc/monetr
