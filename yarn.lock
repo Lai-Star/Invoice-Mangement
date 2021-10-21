@@ -2322,10 +2322,10 @@
     "@types/scheduler" "*"
     csstype "^3.0.2"
 
-"@types/react@17.0.31":
-  version "17.0.31"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.31.tgz#fe05ebf91ff3ae35bb6b13f6c1b461db8089dff8"
-  integrity sha512-MQSR5EL4JZtdWRvqDgz9kXhSDDoy2zMTYyg7UhP+FZ5ttUOocWyxiqFJiI57sUG0BtaEX7WDXYQlkCYkb3X9vQ==
+"@types/react@17.0.30":
+  version "17.0.30"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.30.tgz#2f8e6f5ab6415c091cc5e571942ee9064b17609e"
+  integrity sha512-3Dt/A8gd3TCXi2aRe84y7cK1K8G+N9CZRDG8kDGguOKa0kf/ZkSwTmVIDPsm/KbQOVMaDJXwhBtuOXxqwdpWVg==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -9796,10 +9796,10 @@ postcss-values-parser@^2.0.0, postcss-values-parser@^2.0.1:
     indexes-of "^1.0.1"
     uniq "^1.0.1"
 
-postcss@8.3.10:
-  version "8.3.10"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.3.10.tgz#4d614e108ccc69c65c2f6dc6cec23dd5c85b73af"
-  integrity sha512-YYfvfUdWx+ECpr5Hgc6XRfsaux8LksL5ey8qTtWiuRXOpOF1YYMwAySdh0nSmwhZAFvvJ6rgiIkKVShu4x2T1Q==
+postcss@8.3.11:
+  version "8.3.11"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.3.11.tgz#c3beca7ea811cd5e1c4a3ec6d2e7599ef1f8f858"
+  integrity sha512-hCmlUAIlUiav8Xdqw3Io4LcpA1DOt7h3LSTAC4G6JGHFFaWzI6qvFt9oilvl8BmkbBRX1IhM90ZAmpk68zccQA==
   dependencies:
     nanoid "^3.1.30"
     picocolors "^1.0.0"
