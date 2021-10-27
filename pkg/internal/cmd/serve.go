@@ -374,7 +374,7 @@ func RunServer() error {
 		ctx, cancel := context.WithTimeout(context.Background(), timeout)
 		defer cancel()
 		// close all hosts.
-		_ = app.Shutdown(ctx)
+		app.Shutdown(ctx)
 		close(idleConnsClosed)
 	})
 
@@ -393,8 +393,8 @@ func RunServer() error {
 
 		return app.Run(iris.Listener(listener))
 	} else {
-		listenAddress := fmt.Sprintf(":%d", configuration.ListenPort)
-		_ = app.Listen(listenAddress, iris.WithoutInterruptHandler, iris.WithoutServerError(iris.ErrServerClosed))
+		// TODO Allow listen port to be changed via config.
+		app.Listen(":4000", iris.WithoutInterruptHandler, iris.WithoutServerError(iris.ErrServerClosed))
 	}
 
 	<-idleConnsClosed
