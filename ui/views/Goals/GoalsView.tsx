@@ -38,8 +38,8 @@ export class GoalsView extends Component<WithConnectionProps, State> {
         <List disablePadding className="w-full">
           {
             goalIds.map(item => (
-              <Fragment key={ item }>
-                <GoalRow goalId={ item }/>
+              <Fragment>
+                <GoalRow goalId={ item } key={ item }/>
                 <Divider/>
               </Fragment>
             ))
@@ -101,7 +101,7 @@ export class GoalsView extends Component<WithConnectionProps, State> {
             </div>
             <div>
               <Card elevation={ 4 } className="w-full goals-list">
-                <GoalDetails/>
+                <GoalDetails />
               </Card>
             </div>
           </div>
