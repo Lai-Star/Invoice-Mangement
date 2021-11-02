@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
-	"github.com/monetr/monetr/pkg/internal/consts"
 	"github.com/monetr/monetr/pkg/internal/mock_http_helper"
 	"github.com/monetr/monetr/pkg/internal/myownsanity"
 	"github.com/plaid/plaid-go/plaid"
@@ -23,7 +22,7 @@ func MockCreateLinkToken(t *testing.T) {
 			ValidatePlaidAuthentication(t, request, DoNotRequireAccessToken)
 			var createLinkTokenRequest plaid.LinkTokenCreateRequest
 			require.NoError(t, json.NewDecoder(request.Body).Decode(&createLinkTokenRequest), "must decode request")
-			require.Equal(t, consts.PlaidClientName, createLinkTokenRequest.ClientName, "client name must match the shared const")
+			require.NotEmpty(t, createLinkTokenRequest.ClientName, "client name is required")
 			require.NotEmpty(t, createLinkTokenRequest.Language, "language is required")
 
 			if createLinkTokenRequest.AccessToken != nil {
@@ -54,7 +53,7 @@ func MockCreateLinkTokenFailure(t *testing.T) {
 			ValidatePlaidAuthentication(t, request, DoNotRequireAccessToken)
 			var createLinkTokenRequest plaid.LinkTokenCreateRequest
 			require.NoError(t, json.NewDecoder(request.Body).Decode(&createLinkTokenRequest), "must decode request")
-			require.Equal(t, consts.PlaidClientName, createLinkTokenRequest.ClientName, "client name must match the shared const")
+			require.NotEmpty(t, createLinkTokenRequest.ClientName, "client name is required")
 			require.NotEmpty(t, createLinkTokenRequest.Language, "language is required")
 
 			if createLinkTokenRequest.AccessToken != nil {

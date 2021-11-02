@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
-	"github.com/monetr/monetr/pkg/internal/consts"
 	"github.com/monetr/monetr/pkg/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -18,8 +17,10 @@ func TestPlaidRepositoryBase_GetLink(t *testing.T) {
 	require.NotNil(t, txn, "must be able to pull the transaction for test")
 
 	plaidLink := &models.PlaidLink{
-		ItemId:     gofakeit.UUID(),
-		Products:   consts.PlaidProductStrings(),
+		ItemId: gofakeit.UUID(),
+		Products: []string{
+			"transactions",
+		},
 		WebhookUrl: "https://monetr.test/webhook",
 	}
 
@@ -53,7 +54,7 @@ func TestPlaidRepositoryBase_GetLink(t *testing.T) {
 	})
 
 	t.Run("not found", func(t *testing.T) {
-		readLink, err := plaidRepo.GetLink(context.Background(), link.AccountId, link.LinkId+100)
+		readLink, err := plaidRepo.GetLink(context.Background(), link.AccountId, link.LinkId + 100)
 		assert.EqualError(t, err, "failed to retrieve link: pg: no rows in result set")
 		assert.Nil(t, readLink, "link must be nil")
 	})
@@ -65,8 +66,10 @@ func TestPlaidRepositoryBase_GetLinkByItemId(t *testing.T) {
 	require.NotNil(t, txn, "must be able to pull the transaction for test")
 
 	plaidLink := &models.PlaidLink{
-		ItemId:     gofakeit.UUID(),
-		Products:   consts.PlaidProductStrings(),
+		ItemId: gofakeit.UUID(),
+		Products: []string{
+			"transactions",
+		},
 		WebhookUrl: "https://monetr.test/webhook",
 	}
 
