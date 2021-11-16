@@ -83,7 +83,7 @@
     "ts-pnp": "1.2.0",
     "web-vitals": "2.1.2",
     "webpack-manifest-plugin": "4.0.2",
-    "workbox-webpack-plugin": "6.3.0"
+    "workbox-webpack-plugin": "6.4.1"
   },
   "scripts": {
     "build": "webpack",
@@ -124,7 +124,7 @@
     "@testing-library/jest-dom": "5.15.0",
     "@testing-library/react": "12.1.2",
     "@testing-library/user-event": "13.5.0",
-    "@types/react": "17.0.34",
+    "@types/react": "17.0.35",
     "@types/react-dom": "17.0.11",
     "@types/react-google-recaptcha": "2.1.2",
     "@types/react-redux": "7.1.20",
