@@ -2071,11 +2071,6 @@
   resolved "https://registry.npmjs.org/@csstools/normalize.css/-/normalize.css-12.0.0.tgz"
   integrity sha512-M0qqxAcwCsIVfpFQSlGN5XjXWu8l5JDZN+fPt1LeW5SZexQTgnaEvgXAY+CeygRw0EeppWHi12JxESWiWrB0Sg==
 
-"@date-io/core@^1.3.13":
-  version "1.3.13"
-  resolved "https://registry.npmjs.org/@date-io/core/-/core-1.3.13.tgz"
-  integrity sha512-AlEKV7TxjeK+jxWVKcCFrfYAk8spX9aCyiToFIiLPtfQbsjmRGLIhb5VZgptQcJdHtLXo7+m0DuurwFgUToQuA==
-
 "@date-io/core@^2.11.0":
   version "2.11.0"
   resolved "https://registry.npmjs.org/@date-io/core/-/core-2.11.0.tgz"
@@ -2102,16 +2097,9 @@
   dependencies:
     "@date-io/core" "^2.11.0"
 
-"@date-io/moment@1.3.13":
-  version "1.3.13"
-  resolved "https://registry.npmjs.org/@date-io/moment/-/moment-1.3.13.tgz"
-  integrity sha512-3kJYusJtQuOIxq6byZlzAHoW/18iExJer9qfRF5DyyzdAk074seTuJfdofjz4RFfTd/Idk8WylOQpWtERqvFuQ==
-  dependencies:
-    "@date-io/core" "^1.3.13"
-
-"@date-io/moment@^2.11.0":
+"@date-io/moment@2.11.0", "@date-io/moment@^2.11.0":
   version "2.11.0"
-  resolved "https://registry.npmjs.org/@date-io/moment/-/moment-2.11.0.tgz"
+  resolved "https://registry.yarnpkg.com/@date-io/moment/-/moment-2.11.0.tgz#850f8dd090d401845b39276d034dbabe20224ef5"
   integrity sha512-QSL+83qezQ9Ty0dtFgAkk6eC0GMl/lgYfDajeVUDB3zVA2A038hzczRLBg29ifnBGhQMPABxuOafgWwhDjlarg==
   dependencies:
     "@date-io/core" "^2.11.0"
@@ -7810,10 +7798,10 @@ jest-message-util@^27.2.5:
     slash "^3.0.0"
     stack-utils "^2.0.3"
 
-jest-mock-axios@4.5.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/jest-mock-axios/-/jest-mock-axios-4.5.0.tgz#9862bcbea6c0f9c42bc8a125169eaeea514b2f56"
-  integrity sha512-AVrXkFS4psXtuR63J3SFOIpn6VQJHb3khuWJG+yKmSOAvY3jltAkBivV99QTWE+BA6kBYGGUojk6AGE177F8Gw==
+jest-mock-axios@4.4.1:
+  version "4.4.1"
+  resolved "https://registry.npmjs.org/jest-mock-axios/-/jest-mock-axios-4.4.1.tgz"
+  integrity sha512-7d+r1lY45V7x/8if5UjT9oNMd5FHJwQGp7UKLsgAAq+PQK17PbTqs5wp3mvCK18hLJYmytseXLZmLkCYHjking==
   dependencies:
     synchronous-promise "^2.0.15"
 
