@@ -62,6 +62,8 @@ github.com/MicahParks/keyfunc v0.10.0 h1:jWNhUVtMchsdYVl714lrZL8On+SKPEvPKC+CpIN
 github.com/MicahParks/keyfunc v0.10.0/go.mod h1:R8RZa27qn+5cHTfYLJ9/+7aSb5JIdz7cl0XFo0o4muo=
 github.com/MicahParks/keyfunc v1.0.0 h1:O9VAkG6q/LqX4eS+HuIsW9KfC/Luh2NBQr9v4NiwHU0=
 github.com/MicahParks/keyfunc v1.0.0/go.mod h1:R8RZa27qn+5cHTfYLJ9/+7aSb5JIdz7cl0XFo0o4muo=
+github.com/MicahParks/keyfunc v1.0.1 h1:BIKfiyELXV0A8SRCHQaByJW0s71xXpArhzfTS3uf26c=
+github.com/MicahParks/keyfunc v1.0.1/go.mod h1:R8RZa27qn+5cHTfYLJ9/+7aSb5JIdz7cl0XFo0o4muo=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/OneOfOne/xxhash v1.2.8 h1:31czK/TI9sNkxIKfaUfGlU47BAxQ0ztGgd9vPyqimf8=
 github.com/OneOfOne/xxhash v1.2.8/go.mod h1:eZbhyaAYD41SGSSsnmcpxVoRiQ/MPUTjUdIIOT9Um7Q=
@@ -416,8 +418,6 @@ github.com/iris-contrib/middleware/cors v0.0.0-20210110101738-6d0a4d799b5d h1:s9
 github.com/iris-contrib/middleware/cors v0.0.0-20210110101738-6d0a4d799b5d/go.mod h1:e2S1O+DNOz74yNNTyH4S2+EOx0eoiIw6N0SxPXiLLqA=
 github.com/iris-contrib/middleware/cors v0.0.0-20211206141049-cd414922a94e h1:ZxtQVwH4o0wKhEVzWf6l+v43v8gL0MGeqJD1qOzSHvk=
 github.com/iris-contrib/middleware/cors v0.0.0-20211206141049-cd414922a94e/go.mod h1:uM0rDwKclW+huaAvfdY20SGY/lK50PxS2oXHSzFAJZM=
-github.com/iris-contrib/middleware/cors v0.0.0-20211206172221-a2879657471e h1:x7EVsbjXuDv3qxrVeOhBZ1zCSgWfqkyIBZX5Z3e5sWc=
-github.com/iris-contrib/middleware/cors v0.0.0-20211206172221-a2879657471e/go.mod h1:uM0rDwKclW+huaAvfdY20SGY/lK50PxS2oXHSzFAJZM=
 github.com/iris-contrib/pongo2 v0.0.1/go.mod h1:Ssh+00+3GAZqSQb30AvBRNxBx7rf0GqwkjqxNd0u65g=
 github.com/iris-contrib/schema v0.0.1/go.mod h1:urYA3uvUNG1TIIjOSCzHr9/LmbQo8LrOcOqfqxa4hXw=
 github.com/iris-contrib/schema v0.0.6 h1:CPSBLyx2e91H2yJzPuhGuifVRnZBBJ3pCOMbOvPZaTw=
