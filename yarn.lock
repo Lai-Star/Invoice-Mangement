@@ -5940,10 +5940,10 @@ camelcase-css@^2.0.1:
   resolved "https://registry.npmjs.org/camelcase-css/-/camelcase-css-2.0.1.tgz"
   integrity sha512-QOSvevhslijgYwRx6Rv7zKdMF8lbRmx+uQGx2+vDc+KI/eBnsy9kit5aj23AgGu3pa4t9AgwbnXWqS+iOY+2aA==
 
-camelcase@6.2.1:
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-6.2.1.tgz#250fd350cfd555d0d2160b1d51510eaf8326e86e"
-  integrity sha512-tVI4q5jjFV5CavAU8DXfza/TJcZutVKo/5Foskmsqcm0MsL91moHvwiGNnqaa2o6PF/7yT5ikDRcVcl8Rj6LCA==
+camelcase@6.3.0:
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-6.3.0.tgz#5685b95eb209ac9c0c177467778c9c84df58ba9a"
+  integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
 camelcase@^5.3.1:
   version "5.3.1"
@@ -12322,10 +12322,10 @@ synchronous-promise@^2.0.15:
   resolved "https://registry.npmjs.org/synchronous-promise/-/synchronous-promise-2.0.15.tgz"
   integrity sha512-k8uzYIkIVwmT+TcglpdN50pS2y1BDcUnBPK9iJeGu0Pl1lOI8pD6wtzgw91Pjpe+RxtTncw32tLxs/R0yNL2Mg==
 
-tailwindcss@3.0.10:
-  version "3.0.10"
-  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.0.10.tgz#be83322644353b053fe8581f8f2413e958d7e11b"
-  integrity sha512-dSKGNqI6hyzY8CPX0GsYTZ9yTxGesHrNFPIANTBe8bQWNHGTsAd7PoZQ+HTaIQb/we3zaZfa4F487WCCvhBGbw==
+tailwindcss@3.0.9:
+  version "3.0.9"
+  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.0.9.tgz#6755dba95dfa092d14f304ff47703a28c2c07138"
+  integrity sha512-X8TVifxDWfiNXInOeBofTteXAtZ5f0HnLs/uV4jDQNShc33Jb7qjYbk4VwI365rWAzcqYTks+9kesf3xH7Y35A==
   dependencies:
     arg "^5.0.1"
     chalk "^4.1.2"
