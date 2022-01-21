@@ -56,9 +56,9 @@
     "redux-thunk": "2.4.1",
     "reselect": "4.0.0",
     "resolve": "1.21.0",
-    "resolve-url-loader": "4.0.0",
+    "resolve-url-loader": "5.0.0",
     "rrule": "2.6.8",
-    "sass": "1.48.0",
+    "sass": "1.49.0",
     "selector-action": "1.2.0",
     "semver": "7.3.5",
     "terser-webpack-plugin": "5.3.0",
@@ -97,8 +97,8 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "7.16.7",
-    "@babel/preset-env": "7.16.8",
+    "@babel/core": "7.16.10",
+    "@babel/preset-env": "7.16.11",
     "@babel/preset-react": "7.16.7",
     "@babel/preset-typescript": "7.16.7",
     "@hot-loader/react-dom": "17.0.2",
