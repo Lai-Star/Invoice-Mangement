@@ -6,7 +6,7 @@ require (
 	github.com/MicahParks/keyfunc v1.0.1
 	github.com/OneOfOne/xxhash v1.2.8
 	github.com/alicebob/miniredis/v2 v2.18.0
-	github.com/brianvoe/gofakeit/v6 v6.14.2
+	github.com/brianvoe/gofakeit/v6 v6.14.3
 	github.com/form3tech-oss/jwt-go v3.2.5+incompatible
 	github.com/fsnotify/fsnotify v1.5.1
 	github.com/gavv/httpexpect/v2 v2.3.1
@@ -22,7 +22,7 @@ require (
 	github.com/jarcoal/httpmock v1.1.0
 	github.com/kataras/iris/v12 v12.2.0-alpha5
 	github.com/mailru/easyjson v0.7.7 // indirect
-	github.com/nleeper/goment v1.4.2
+	github.com/nleeper/goment v1.4.3
 	github.com/nyaruka/phonenumbers v1.0.74
 	github.com/pkg/errors v0.9.2-0.20201214064552-5dd12d0cfe7f
 	github.com/plaid/plaid-go v1.9.0
