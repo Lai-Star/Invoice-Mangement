@@ -686,6 +686,8 @@ github.com/plaid/plaid-go v1.8.0 h1:P9jdKzzdbw0tpQ78trWcUSQr9sWCqwJV5sdpSpsMt+E=
 github.com/plaid/plaid-go v1.8.0/go.mod h1:jsPs/+TSYwDPNxMhY2uwlpDUJBnqppGg+pNXNgdITc0=
 github.com/plaid/plaid-go v1.9.0 h1:n3WpAvk1UH0hckVA37ngCHG7FTlbkDnwO34DK26OQC8=
 github.com/plaid/plaid-go v1.9.0/go.mod h1:jsPs/+TSYwDPNxMhY2uwlpDUJBnqppGg+pNXNgdITc0=
+github.com/plaid/plaid-go v1.10.0 h1:Ka7zYLaA7UzqlABxeIUG/87lLBHsvljGgWC+O9LfMdk=
+github.com/plaid/plaid-go v1.10.0/go.mod h1:jsPs/+TSYwDPNxMhY2uwlpDUJBnqppGg+pNXNgdITc0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/posener/complete v1.1.1/go.mod h1:em0nMJCgc9GFtwrmVmEMR/ZL6WyhyjMBndrE9hABlRI=
@@ -808,6 +810,8 @@ github.com/stripe/stripe-go/v72 v72.83.0 h1:yUQj9Qg008V/Eio3qa9WZrlXEigH7CNLw5CS
 github.com/stripe/stripe-go/v72 v72.83.0/go.mod h1:QwqJQtduHubZht9mek5sds9CtQcKFdsykV9ZepRWwo0=
 github.com/stripe/stripe-go/v72 v72.85.0 h1:fpCITWZpSx1J4hvSnwUp8Zjyj3fSvw9CqO8FqM1n5/w=
 github.com/stripe/stripe-go/v72 v72.85.0/go.mod h1:QwqJQtduHubZht9mek5sds9CtQcKFdsykV9ZepRWwo0=
+github.com/stripe/stripe-go/v72 v72.86.0 h1:MkFhg7wwphqmDGI+KdOJKS3OKZR9O3qMWUpKt5fvslE=
+github.com/stripe/stripe-go/v72 v72.86.0/go.mod h1:QwqJQtduHubZht9mek5sds9CtQcKFdsykV9ZepRWwo0=
 github.com/subosito/gotenv v1.2.0 h1:Slr1R9HxAlEKefgq5jn9U+DnETlIUa6HfgEzj0g5d7s=
 github.com/subosito/gotenv v1.2.0/go.mod h1:N0PQaV/YGNqwC0u51sEeR/aUtSLEXKX9iv69rRypqCw=
 github.com/tdewolff/minify/v2 v2.9.10/go.mod h1:U1Nc+/YBSB0FPEarqcgkYH3Ep4DNyyIbOyl5P4eWMuo=
