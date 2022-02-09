@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@date-io/moment": "2.13.1",
+    "@date-io/moment": "2.11.0",
     "@emotion/react": "11.7.1",
     "@emotion/styled": "11.6.0",
-    "@mui/icons-material": "5.3.0",
+    "@mui/icons-material": "5.4.1",
     "@mui/lab": "5.0.0-alpha.68",
     "@mui/material": "5.3.0",
     "@mui/styles": "5.3.0",
@@ -156,7 +156,7 @@
     "webpack": "5.66.0",
     "webpack-bundle-analyzer": "4.5.0",
     "webpack-cli": "4.9.2",
-    "webpack-dev-server": "4.7.3",
+    "webpack-dev-server": "4.7.4",
     "webpackbar": "5.0.2"
   },
   "jest": {
