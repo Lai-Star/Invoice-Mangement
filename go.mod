@@ -18,7 +18,7 @@ require (
 	github.com/gomodule/redigo v1.8.8
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/hashicorp/vault/api v1.3.1
-	github.com/iris-contrib/middleware/cors v0.0.0-20211206172221-a2879657471e
+	github.com/iris-contrib/middleware/cors v0.0.0-20220218204641-8e282f24acb7
 	github.com/jarcoal/httpmock v1.1.0
 	github.com/kataras/iris/v12 v12.2.0-alpha6
 	github.com/mailru/easyjson v0.7.7 // indirect
@@ -32,7 +32,7 @@ require (
 	github.com/spf13/cobra v1.3.0
 	github.com/spf13/viper v1.10.0
 	github.com/stretchr/testify v1.7.0
-	github.com/stripe/stripe-go/v72 v72.87.0
+	github.com/stripe/stripe-go/v72 v72.88.0
 	github.com/teambition/rrule-go v1.7.3
 	github.com/vmihailenco/msgpack/v5 v5.3.5
 	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
