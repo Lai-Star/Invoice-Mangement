@@ -5,12 +5,12 @@ go 1.18
 require (
 	github.com/MicahParks/keyfunc v1.0.1
 	github.com/OneOfOne/xxhash v1.2.8
-	github.com/alicebob/miniredis/v2 v2.19.0
+	github.com/alicebob/miniredis/v2 v2.18.0
 	github.com/brianvoe/gofakeit/v6 v6.15.0
 	github.com/form3tech-oss/jwt-go v3.2.5+incompatible
 	github.com/fsnotify/fsnotify v1.5.1
 	github.com/gavv/httpexpect/v2 v2.3.1
-	github.com/getsentry/sentry-go v0.12.0
+	github.com/getsentry/sentry-go v0.13.0
 	github.com/go-pg/migrations/v8 v8.1.0
 	github.com/go-pg/pg/v10 v10.10.6
 	github.com/gocraft/work v0.5.1
