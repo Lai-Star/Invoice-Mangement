@@ -5,12 +5,12 @@ go 1.18
 require (
 	github.com/MicahParks/keyfunc v1.0.1
 	github.com/OneOfOne/xxhash v1.2.8
-	github.com/alicebob/miniredis/v2 v2.18.0
+	github.com/alicebob/miniredis/v2 v2.19.0
 	github.com/brianvoe/gofakeit/v6 v6.15.0
 	github.com/form3tech-oss/jwt-go v3.2.5+incompatible
 	github.com/fsnotify/fsnotify v1.5.1
 	github.com/gavv/httpexpect/v2 v2.3.1
-	github.com/getsentry/sentry-go v0.12.0
+	github.com/getsentry/sentry-go v0.13.0
 	github.com/go-pg/migrations/v8 v8.1.0
 	github.com/go-pg/pg/v10 v10.10.6
 	github.com/gocraft/work v0.5.1
@@ -29,7 +29,7 @@ require (
 	github.com/prometheus/client_golang v1.12.1
 	github.com/robfig/cron v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.8.1
-	github.com/spf13/cobra v1.3.0
+	github.com/spf13/cobra v1.4.0
 	github.com/spf13/viper v1.10.0
 	github.com/stretchr/testify v1.7.1
 	github.com/stripe/stripe-go/v72 v72.94.0
