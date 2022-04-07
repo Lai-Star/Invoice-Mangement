@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     container: node:17.5.0
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/cache@v3
         with:
           path: |
@@ -85,7 +85,7 @@ jobs:
           - amd64
           - arm64
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/cache@v3
         with:
           path: |
@@ -95,7 +95,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
             ${{ runner.os }}-go-
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         name: Download Compiled UI Artifacts
         with:
           name: '${{ needs.release_please.outputs.version }}-ui'
@@ -121,33 +121,33 @@ jobs:
     name: Upload Artifacts
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
         name: Download linux/amd64
         with:
           name: 'monetr-v${{ needs.release_please.outputs.version }}-linux-amd64.tar.gz'
           path: '/tmp'
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         name: Download linux/arm64
         with:
           name: 'monetr-v${{ needs.release_please.outputs.version }}-linux-arm64.tar.gz'
           path: '/tmp'
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         name: Download darwin/amd64
         with:
           name: 'monetr-v${{ needs.release_please.outputs.version }}-darwin-amd64.tar.gz'
           path: '/tmp'
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         name: Download darwin/arm64
         with:
           name: 'monetr-v${{ needs.release_please.outputs.version }}-darwin-arm64.tar.gz'
           path: '/tmp'
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         name: Download windows/amd64
         with:
           name: 'monetr-v${{ needs.release_please.outputs.version }}-windows-amd64.tar.gz'
           path: '/tmp'
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         name: Download windows/arm64
         with:
           name: 'monetr-v${{ needs.release_please.outputs.version }}-windows-arm64.tar.gz'
@@ -199,8 +199,8 @@ jobs:
     name: Container (Docker)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
         name: Download Compiled UI Artifacts
         with:
           name: '${{ needs.release_please.outputs.version }}-ui'
@@ -242,8 +242,8 @@ jobs:
           target_url: https://my.monetr.dog
           environment: my.monetr.dog
           ref: "v${{ needs.release_please.outputs.version }}"
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
         name: Download Compiled UI Artifacts
         with:
           name: '${{ needs.release_please.outputs.version }}-source-maps'
