@@ -7,7 +7,7 @@ require (
 	github.com/MicahParks/keyfunc v1.0.1
 	github.com/OneOfOne/xxhash v1.2.8
 	github.com/alicebob/miniredis/v2 v2.21.0
-	github.com/aws/aws-sdk-go v1.44.32
+	github.com/aws/aws-sdk-go v1.44.56
 	github.com/brianvoe/gofakeit/v6 v6.16.0
 	github.com/form3tech-oss/jwt-go v3.2.5+incompatible
 	github.com/fsnotify/fsnotify v1.5.4
@@ -17,7 +17,7 @@ require (
 	github.com/go-pg/pg/v10 v10.10.6
 	github.com/gocraft/work v0.5.1
 	github.com/golang-jwt/jwt/v4 v4.2.0
-	github.com/gomodule/redigo v1.8.8
+	github.com/gomodule/redigo v1.8.9
 	github.com/hashicorp/vault/api v1.3.1
 	github.com/iris-contrib/middleware/cors v0.0.0-20220605200020-e50b808c7502
 	github.com/jarcoal/httpmock v1.2.0
